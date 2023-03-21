@@ -1,6 +1,7 @@
 
 #include <spdlog/spdlog.h>
 
+#include <http/respond.hpp>
 #include <server/shttp_Server.hpp>
 
 simpleHTTP::Server&
@@ -11,11 +12,6 @@ simpleHTTP::Server::start() {
   }
 
   return *this;
-}
-
-void
-simpleHTTP::Server::setRouter(Router& other) {
-  router = other;
 }
 
 void
@@ -44,12 +40,15 @@ simpleHTTP::Server::handleData(sock_fd sock) {
 
 void
 simpleHTTP::Server::handleRequest(sock_fd sock, const char* req) {
-  // TODO route request
-  // TODO respond
-}
+  auto route = Parsing::getRoute(req);
+  if (!route) {
+    Respond::BadRequest(sock);
+  }
 
-void
-simpleHTTP::Server::respond(sock_fd sock, const simpleHTTP::ByteVector& res) {
-  spdlog::debug("Sending {} ", res.data());
-  send(sock, res.data(), res.size(), 0);
+  auto content = pages.loadPage(route.value());
+  if (!content) {
+    Respond::NotFound(route.value(), sock);
+  }
+
+  Respond::WebPage(content.value(), sock);
 }

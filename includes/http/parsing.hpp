@@ -5,11 +5,9 @@
 #include <string_view>
 
 #include <http/http.types.hpp>
-#include <routing/router.types.hpp>
-
 namespace simpleHTTP {
 namespace Parsing {
-[[nodiscard]] std::optional<Route> getRoute(std::string_view);
+[[nodiscard]] std::optional<std::string_view> getRoute(std::string_view);
 }
 }  // namespace simpleHTTP
 

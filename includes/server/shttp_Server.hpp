@@ -6,7 +6,8 @@
 #include <stdexcept>
 #include <string>
 
-#include <routing/router.hpp>
+#include <http/parsing.hpp>
+#include <pages/page_manager.hpp>
 #include <server/server.types.hpp>
 #include <socket/socket.hpp>
 #include <types/data.types.hpp>
@@ -20,21 +21,18 @@ class ServerException : public std::runtime_error {
 
 class Server {
  public:
-  Server() : srvSock(9000), router() {}
+  Server() : srvSock(9000) {}
   ~Server() = default;
 
   Server& start();
 
-  void setRouter(Router&);
-
  private:
   Socket srvSock;
-  Router router;
+  Pages  pages;
 
   void handleEvents(size_t);
   void handleData(sock_fd);
   void handleRequest(sock_fd, const char*);
-  void respond(sock_fd, const ByteVector&);
 };
 }  // namespace simpleHTTP
 
