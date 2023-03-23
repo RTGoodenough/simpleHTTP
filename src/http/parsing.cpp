@@ -11,18 +11,21 @@ std::optional<std::string_view>
 getRoute(std::string_view req) {
 
   auto requestLine = split_first(req, "\r\n");
-  if (requestLine.empty())
+  if (requestLine.empty()) {
     return std::nullopt;
+  }
 
   size_t start = requestLine.find(" /");
-  if (start == std::string_view::npos)
+  if (start == std::string_view::npos) {
     return std::nullopt;
+  }
 
   size_t end = requestLine.find_last_of(' ');
-  if (end == std::string_view::npos || end <= start)
+  if (end == std::string_view::npos || end <= start) {
     return std::nullopt;
+  }
 
-  return requestLine.substr(start + 1, end - start);
+  return requestLine.substr(start + 1, end - start - 1);
 }
 
 }  // namespace Parsing

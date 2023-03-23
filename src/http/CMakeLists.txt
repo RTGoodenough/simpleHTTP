@@ -4,4 +4,7 @@ target_sources(
   PRIVATE
   parsing.cpp
   respond.cpp
+  response.cpp
+  types/header.types.cpp
+  types/status.types.cpp
 )

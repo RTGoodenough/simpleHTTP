@@ -4,7 +4,7 @@
 #include <optional>
 #include <string_view>
 
-#include <http/http.types.hpp>
+#include <http/types/status.types.hpp>
 namespace simpleHTTP {
 namespace Parsing {
 [[nodiscard]] std::optional<std::string_view> getRoute(std::string_view);

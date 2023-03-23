@@ -12,8 +12,7 @@ class Pages {
  public:
   [[nodiscard]] std::optional<PageContent> loadPage(std::string_view);
 
- private:
-  std::filesystem::path basePath;
+  void contentUsed(const char*);
 };
 }  // namespace simpleHTTP
 

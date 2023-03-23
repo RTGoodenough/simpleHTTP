@@ -9,9 +9,9 @@ SET(INCLUDE_DIR includes)
 SET(SRC_DIR src)
 SET(VENDOR_DIR vendor)
 
-add_library(
+add_executable(
   ${PROJECT_NAME}
-  SHARED
+  ${SRC_DIR}/simpleHTTP.cpp
 )
 
 add_subdirectory(${SRC_DIR})

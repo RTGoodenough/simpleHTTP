@@ -43,12 +43,15 @@ simpleHTTP::Server::handleRequest(sock_fd sock, const char* req) {
   auto route = Parsing::getRoute(req);
   if (!route) {
     Respond::BadRequest(sock);
+    return;
   }
 
   auto content = pages.loadPage(route.value());
   if (!content) {
     Respond::NotFound(route.value(), sock);
+    return;
   }
 
   Respond::WebPage(content.value(), sock);
+  pages.contentUsed(content.value().file.content);
 }
