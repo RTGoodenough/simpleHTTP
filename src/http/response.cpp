@@ -11,7 +11,6 @@
 
 #include <string.h>
 
-#include <spdlog/spdlog.h>
 
 #include <http/response.hpp>
 

@@ -1,8 +1,6 @@
 
 #include <fstream>
 
-#include <spdlog/spdlog.h>
-
 #include <util/file_operations.hpp>
 
 namespace simpleHTTP {

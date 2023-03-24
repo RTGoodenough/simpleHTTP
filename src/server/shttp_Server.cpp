@@ -9,8 +9,6 @@
  * See file LICENSE for the full License
  */
 
-#include <spdlog/spdlog.h>
-
 #include <http/respond.hpp>
 #include <server/shttp_Server.hpp>
 

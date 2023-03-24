@@ -1,6 +1,4 @@
 
-#include <spdlog/spdlog.h>
-
 #include <util/string_view_manipulations.hpp>
 
 std::string_view

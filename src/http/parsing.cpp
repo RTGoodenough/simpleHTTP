@@ -9,8 +9,6 @@
  * See file LICENSE for the full License
  */
 
-#include <spdlog/spdlog.h>
-
 #include <http/parsing.hpp>
 #include <util/string_view_manipulations.hpp>
 
