@@ -13,6 +13,8 @@
 
 #include <pages/page_manager.hpp>
 
+bool checkPath(std::string_view);
+
 bool
 checkPath(std::string_view uri) {
   if (uri.find("..") != std::string_view::npos) {

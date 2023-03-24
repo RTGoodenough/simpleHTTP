@@ -94,30 +94,33 @@ Response::build_addResponseLine(ByteVector& data) const {
   const auto& statusStr = StatusStrs.at(status);
   const auto& statusNumberStr = StatusNumberStrs.at(status);
 
-  auto iter = data.insert(data.end(), HTTP_version.begin(), HTTP_version.end()) + HTTP_version.length();
+  auto iter =
+      data.insert(data.end(), HTTP_version.begin(), HTTP_version.end()) + static_cast<std::ptrdiff_t>(HTTP_version.length());
   iter = data.insert(iter, ' ') + 1;
-  iter = data.insert(iter, statusNumberStr.begin(), statusNumberStr.end()) + statusNumberStr.length();
+  iter = data.insert(iter, statusNumberStr.begin(), statusNumberStr.end()) +
+         static_cast<std::ptrdiff_t>(statusNumberStr.length());
   iter = data.insert(iter, ' ') + 1;
-  iter = data.insert(iter, statusStr.begin(), statusStr.end()) + statusStr.length();
+  iter = data.insert(iter, statusStr.begin(), statusStr.end()) + static_cast<std::ptrdiff_t>(statusStr.length());
   iter = data.insert(iter, ' ') + 1;
-  iter = data.insert(iter, lineEnd.begin(), lineEnd.end()) + lineEnd.length();
+  iter = data.insert(iter, lineEnd.begin(), lineEnd.end()) + static_cast<std::ptrdiff_t>(lineEnd.length());
 }
 
 inline void
 Response::build_addHeader(Header type, const std::string_view value, ByteVector& data) const {
   const auto& headerStr = HeaderStrs.at(type);
 
-  auto iter = data.insert(data.end(), headerStr.begin(), headerStr.end()) + headerStr.length();
+  auto iter = data.insert(data.end(), headerStr.begin(), headerStr.end()) + static_cast<std::ptrdiff_t>(headerStr.length());
   iter = data.insert(iter, ':') + 1;
   iter = data.insert(iter, ' ') + 1;
-  iter = data.insert(iter, value.begin(), value.end()) + value.length();
-  iter = data.insert(iter, lineEnd.begin(), lineEnd.end()) + lineEnd.length();
+  iter = data.insert(iter, value.begin(), value.end()) + static_cast<std::ptrdiff_t>(value.length());
+  iter = data.insert(iter, lineEnd.begin(), lineEnd.end()) + static_cast<std::ptrdiff_t>(lineEnd.length());
 }
 
 inline void
 Response::build_addContent(PageContent content, ByteVector& data) const {
-  auto iter = data.insert(data.end(), lineEnd.begin(), lineEnd.end()) + lineEnd.length();
-  iter = data.insert(iter, content.file.content, content.file.content + content.file.length) + content.file.length;
+  auto iter = data.insert(data.end(), lineEnd.begin(), lineEnd.end()) + static_cast<std::ptrdiff_t>(lineEnd.length());
+  iter = data.insert(iter, content.file.content, content.file.content + content.file.length) +
+         static_cast<std::ptrdiff_t>(content.file.length);
 }
 
 }  // namespace simpleHTTP
