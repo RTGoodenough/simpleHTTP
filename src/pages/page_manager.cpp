@@ -15,6 +15,10 @@ checkPath(std::string_view uri) {
 namespace simpleHTTP {
 PageLoad
 Pages::loadPage(std::string_view uri) {
+
+  if (uri == "/")
+    return {true, PageContent{Content::HTML, useFile(basePath / "index.html")}};
+
   if (!checkPath(uri))
     return {false, PageContent{Content::HTML, useFile(basePath / "NotFound.html")}};
 
