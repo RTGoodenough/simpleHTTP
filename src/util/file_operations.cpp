@@ -7,17 +7,9 @@
 
 namespace simpleHTTP {
 
-ContentType
-getFileType(const std::filesystem::path&) {
-  return HTML;
-}
-
 File
 loadFile(const std::filesystem::path& filepath) {
-  auto type = getFileType(filepath);
-
-  if (!std::filesystem::exists(filepath)) {
-    spdlog::debug("File Doesn't Exist: {}", filepath.c_str());
+  if (!std::filesystem::exists(filepath) || std::filesystem::is_directory(filepath)) {
     return {nullptr, 0};
   }
 

@@ -11,20 +11,30 @@
 namespace simpleHTTP {
 
 namespace Respond {
-void
-WebPage(PageContent content, sock_fd socket) {
-  Response res;
-  res.setStatus(Status::OK).setContent(content);
-  auto data = res.build();
 
+namespace {
+inline void
+Send(const ByteVector& data, sock_fd socket) {
   send(socket, data.data(), data.size(), 0);
+}
+}  // namespace
+
+void
+WebPage(Status status, PageContent content, sock_fd socket) {
+  Response res;
+  res.setStatus(status).setContent(content);
+  Send(res.build(), socket);
 }
 
 void
-NotFound(std::string_view, sock_fd) {}
+BadRequest(sock_fd socket) {
+  Response res;
 
-void
-BadRequest(sock_fd socket) {}
+  res.setStatus(Status::BAD_REQUEST);
+
+  auto data = res.build();
+  Send(data, socket);
+}
 
 }  // namespace Respond
 }  // namespace simpleHTTP

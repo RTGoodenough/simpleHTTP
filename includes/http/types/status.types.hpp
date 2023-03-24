@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 namespace simpleHTTP {
-enum Status {
+enum class Status {
   CONTINUE = 100,
   SWITCHING_PROTOCOLS = 101,
   OK = 200,

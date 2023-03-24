@@ -10,8 +10,8 @@
 
 namespace simpleHTTP {
 namespace Respond {
-void WebPage(PageContent, sock_fd);
-void NotFound(std::string_view, sock_fd);
+void WebPage(Status, PageContent, sock_fd);
+void NotFound(sock_fd);
 void BadRequest(sock_fd);
 }  // namespace Respond
 }  // namespace simpleHTTP

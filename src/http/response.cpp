@@ -1,6 +1,8 @@
 
 #include <string.h>
 
+#include <spdlog/spdlog.h>
+
 #include <http/response.hpp>
 
 namespace simpleHTTP {
@@ -10,7 +12,8 @@ const std::string lineEnd = "\r\n";
 
 ByteVector
 Response::build() {
-  size_t     length = totalLength();
+  size_t length = totalLength();
+
   ByteVector data;
   data.reserve(length);
 
@@ -36,13 +39,13 @@ Response::getStatus() const {
 }
 
 Response&
-Response::setHeader(HeaderType header, std::string_view val) {
+Response::setHeader(Header header, std::string_view val) {
   headers[header] = val;
   return *this;
 }
 
 const std::string_view
-Response::getHeader(HeaderType header) const {
+Response::getHeader(Header header) const {
   if (headers.find(header) == headers.end())
     return {};
 
@@ -53,7 +56,7 @@ Response&
 Response::setContent(PageContent content) {
   page = content;
   content_length = std::to_string(content.file.length);
-  setHeader(CONTENT_TYPE, ContentTypeStrs.at(content.type)).setHeader(CONTENT_LENGTH, content_length);
+  setHeader(Header::CONTENT_TYPE, ContentStrs.at(content.type)).setHeader(Header::CONTENT_LENGTH, content_length);
   return *this;
 }
 
@@ -69,8 +72,9 @@ Response::totalLength() const {
 
   length += lineEnd.length();
 
-  if (page.file.content != nullptr)
+  if (page.file.content != nullptr) {
     length += page.file.length;
+  }
 
   return length;
 }
@@ -90,7 +94,7 @@ Response::build_addResponseLine(ByteVector& data) const {
 }
 
 inline void
-Response::build_addHeader(HeaderType type, const std::string_view value, ByteVector& data) const {
+Response::build_addHeader(Header type, const std::string_view value, ByteVector& data) const {
   const auto& headerStr = HeaderStrs.at(type);
 
   auto iter = data.insert(data.end(), headerStr.begin(), headerStr.end()) + headerStr.length();

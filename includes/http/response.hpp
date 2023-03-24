@@ -15,23 +15,23 @@ class Response {
   Response&            setStatus(Status);
   [[nodiscard]] Status getStatus() const;
 
-  Response&                            setHeader(HeaderType, std::string_view);
-  [[nodiscard]] const std::string_view getHeader(HeaderType) const;
+  Response&                            setHeader(Header, std::string_view);
+  [[nodiscard]] const std::string_view getHeader(Header) const;
 
   Response& setContent(PageContent);
 
-  Response& ContentType(ContentType);
+  Response& setContentType(Content);
 
  private:
-  Status                                           status;
-  std::unordered_map<HeaderType, std::string_view> headers;
-  PageContent                                      page;
-  std::string                                      content_length;
+  Status                                       status;
+  std::unordered_map<Header, std::string_view> headers;
+  PageContent                                  page;
+  std::string                                  content_length;
 
   size_t totalLength() const;
 
   inline void build_addResponseLine(ByteVector&) const;
-  inline void build_addHeader(HeaderType, const std::string_view, ByteVector&) const;
+  inline void build_addHeader(Header, const std::string_view, ByteVector&) const;
   inline void build_addContent(PageContent, ByteVector&) const;
 };
 }  // namespace simpleHTTP

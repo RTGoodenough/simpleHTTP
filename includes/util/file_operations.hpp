@@ -8,9 +8,6 @@
 #include <types/data.types.hpp>
 
 namespace simpleHTTP {
-
-[[nodiscard]] ContentType getFileType(const std::filesystem::path&);
-
 [[nodiscard]] File loadFile(const std::filesystem::path&);
 }  // namespace simpleHTTP
 

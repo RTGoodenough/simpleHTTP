@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 namespace simpleHTTP {
-enum HeaderType {
+enum class Header {
   A_IM,
   ACCEPT,
   ACCEPT_CHARSET,
@@ -81,7 +81,7 @@ enum HeaderType {
   X_FRAME_OPTIONS,
 };
 
-extern const std::unordered_map<HeaderType, std::string> HeaderStrs;
+extern const std::unordered_map<Header, std::string> HeaderStrs;
 
 }  // namespace simpleHTTP
 

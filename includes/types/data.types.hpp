@@ -6,15 +6,17 @@
 namespace simpleHTTP {
 typedef std::vector<char> ByteVector;
 
-enum ContentType {
+enum class Content {
   INVALID,
+  NOT_FOUND,
+  BAD_REQUEST,
   HTML,
   JAVASCRIPT,
 };
 
 struct File {
-  const char* content;
-  size_t      length;
+  const char* content = nullptr;
+  size_t      length = 0;
 };
 }  // namespace simpleHTTP
 

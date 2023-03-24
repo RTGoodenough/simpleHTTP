@@ -2,10 +2,7 @@
 
 #include <filesystem>
 
-#include <spdlog/spdlog.h>
-
 #include <pages/page_manager.hpp>
-#include <util/file_operations.hpp>
 
 bool
 checkPath(std::string_view uri) {
@@ -16,27 +13,50 @@ checkPath(std::string_view uri) {
 }
 
 namespace simpleHTTP {
-std::optional<PageContent>
+PageLoad
 Pages::loadPage(std::string_view uri) {
-
   if (!checkPath(uri))
-    return std::nullopt;
+    return {false, PageContent{Content::HTML, useFile(basePath / "NotFound.html")}};
 
-  std::filesystem::path path = std::filesystem::current_path() / "routes";
-  path /= uri.substr(1);
-  spdlog::debug("Path: {}", path.c_str());
-  auto fileContent = loadFile(path);
+  auto path = basePath / uri.substr(1);
 
-  if (!fileContent.content)
-    return std::nullopt;
+  if (!std::filesystem::exists(path) || std::filesystem::is_directory(path))
+    return {false, PageContent{Content::HTML, useFile(basePath / "NotFound.html")}};
 
-  return PageContent{ContentType::HTML, fileContent};
+  auto type = fileType(path);
+  if (type == Content::INVALID)
+    return {false, PageContent{Content::HTML, useFile(basePath / "NotFound.html")}};
+
+  auto file = useFile(path);
+  if (file.content == nullptr)
+    return {false, PageContent{Content::HTML, useFile(basePath / "NotFound.html")}};
+
+  return {true, PageContent{type, file}};
 }
 
 void
-Pages::contentUsed(const char* content) {
-  if (content != nullptr)
-    delete[] content;
+Pages::contentUsed(File content) {
+  if (content.content != nullptr)
+    delete[] content.content;
+}
+
+Content
+Pages::fileType(const std::filesystem::path& path) const {
+  if (!path.has_extension()) {
+    return Content::HTML;
+  }
+
+  auto ext = path.extension();
+  if (ExtTypeMap.find(ext) == ExtTypeMap.end())
+    return Content::INVALID;
+
+  return ExtTypeMap.at(ext);
+}
+
+File
+Pages::useFile(const std::filesystem::path& path) {
+  auto file = loadFile(path);
+  return file;
 }
 
 }  // namespace simpleHTTP

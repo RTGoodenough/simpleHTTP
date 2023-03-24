@@ -46,12 +46,6 @@ simpleHTTP::Server::handleRequest(sock_fd sock, const char* req) {
     return;
   }
 
-  auto content = pages.loadPage(route.value());
-  if (!content) {
-    Respond::NotFound(route.value(), sock);
-    return;
-  }
-
-  Respond::WebPage(content.value(), sock);
-  pages.contentUsed(content.value().file.content);
+  auto page = pages.loadPage(route.value());
+  Respond::WebPage((page.found ? Status::OK : Status::NOT_FOUND), page.content, sock);
 }
