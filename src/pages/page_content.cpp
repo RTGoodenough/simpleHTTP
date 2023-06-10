@@ -10,12 +10,26 @@
  */
 
 #include <pages/page_content.hpp>
+#include "types/data.types.hpp"
 
-namespace simpleHTTP {
-const std::unordered_map<Content, std::string> ContentStrs = {
-    {Content::HTML, "text/html"},
-    {Content::JAVASCRIPT, "application/javascript"},
-};
+namespace simple {
+const std::string& toContentStr(Content contentType) {
+  static const std::unordered_map<Content, std::string> CONTENT_STRS = {
+      {Content::HTML, "text/html"},
+      {Content::JAVASCRIPT, "application/javascript"},
+  };
 
-const std::unordered_map<std::string, Content> ExtTypeMap{{".html", Content::HTML}, {".js", Content::JAVASCRIPT}};
-}  // namespace simpleHTTP
+  return CONTENT_STRS.at(contentType);
+}
+Content toContentType(const std::string& fileExt) {
+  static const std::unordered_map<std::string, Content> EXT_TYPE_MAP{
+      {".html", Content::HTML}, {".js", Content::JAVASCRIPT}};
+
+  if (EXT_TYPE_MAP.find(fileExt) == EXT_TYPE_MAP.end()) {
+    return Content::INVALID;
+  }
+
+  return EXT_TYPE_MAP.at(fileExt);
+}
+
+}  // namespace simple

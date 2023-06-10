@@ -15,11 +15,14 @@
 #include <optional>
 #include <string_view>
 
+#include <httpparser/httprequestparser.h>
+#include <httpparser/httpresponseparser.h>
+
+#include <http/types/request.hpp>
 #include <http/types/status.types.hpp>
-namespace simpleHTTP {
-namespace Parsing {
-[[nodiscard]] std::optional<std::string_view> getRoute(std::string_view);
-}
-}  // namespace simpleHTTP
+
+namespace simple::http {
+[[nodiscard]] std::optional<http::Request> parse(std::string_view);
+}  // namespace simple::http
 
 #endif

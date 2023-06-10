@@ -9,103 +9,103 @@
  * See file LICENSE for the full License
  */
 
+#include <fcntl.h>
 #include <socket/socket.hpp>
 
-simpleHTTP::Socket::~Socket() {
-  Shutdown();
-}
+simple::Socket::~Socket() { shutdownSock(); }
 
-simpleHTTP::Socket::Socket(port p) {
-  sock = socket(AF_INET, SOCK_STREAM, 0);
-  if (sock < 0) {
-    SocketException::Throw("Unable To Create Socket");
+simple::Socket::Socket(port prt)
+    : _sock(socket(AF_INET, SOCK_STREAM, 0)), _pollfd(), _addr(), _pollEv(), _events() {
+  if (_sock < 0) {
+    SocketException::error("Unable To Create Socket");
   }
 
   int opt = 1;
-  if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)) < 0) {
-    SocketException::Throw("Unable To Set Socket Options");
-    Shutdown();
+  if (setsockopt(_sock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)) < 0) {
+    SocketException::error("Unable To Set Socket Options");
+    shutdownSock();
   }
 
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = INADDR_ANY;
-  addr.sin_port = htons(p);
+  _addr.sin_family = AF_INET;
+  _addr.sin_addr.s_addr = INADDR_ANY;
+  _addr.sin_port = htons(prt);
 
-  if (bind(sock, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr)) < 0) {
-    SocketException::Throw("Unable To Bind Socket: ERRNO: " + std::to_string(errno));
-    Shutdown();
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) - Required for fitting C function
+  if (bind(_sock, reinterpret_cast<struct sockaddr*>(&_addr), sizeof(_addr)) < 0) {
+    SocketException::error("Unable To Bind Socket: ERRNO: " + std::to_string(errno));
+    shutdownSock();
   }
 
-  if ((pollfd = epoll_create1(0)) < 0) {
-    SocketException::Throw("Unable To Create epoll: ERRNO: " + std::to_string(errno));
-    Shutdown();
+  int create = (_pollfd = epoll_create1(0));
+  if (create < 0) {
+    SocketException::error("Unable To Create epoll: ERRNO: " + std::to_string(errno));
+    shutdownSock();
   }
 
-  pollEv.events = EPOLLIN;
-  pollEv.data.fd = sock;
-  if (epoll_ctl(pollfd, EPOLL_CTL_ADD, sock, &pollEv) < 0) {
-    SocketException::Throw("Unable To Add Socket To epoll: ERRNO: " + std::to_string(errno));
-    Shutdown();
+  _pollEv.events = EPOLLIN;
+  _pollEv.data.fd = _sock;
+  if (epoll_ctl(_pollfd, EPOLL_CTL_ADD, _sock, &_pollEv) < 0) {
+    SocketException::error("Unable To Add Socket To epoll: ERRNO: " +
+                           std::to_string(errno));
+    shutdownSock();
   }
 
-  if (listen(sock, maxConnections) < 0) {
-    SocketException::Throw("Unable To Start Listening On Socket: ERRNO: " + std::to_string(errno));
-    Shutdown();
+  if (listen(_sock, MAX_CONNECTIONS) < 0) {
+    SocketException::error("Unable To Start Listening On Socket: ERRNO: " +
+                           std::to_string(errno));
+    shutdownSock();
   }
 }
 
-size_t
-simpleHTTP::Socket::poll_wait() {
-  int evCnt = epoll_wait(pollfd, events, maxEv, -1);
+size_t simple::Socket::pollWait() {
+  int evCnt = epoll_wait(_pollfd, _events.data(), MAX_EV, -1);
   if (evCnt < 0) {
-    SocketException::Throw("Error waiting for event in epoll: ERRNO:" + std::to_string(errno));
-    Shutdown();
+    SocketException::error("Error waiting for event in epoll: ERRNO:" +
+                           std::to_string(errno));
+    shutdownSock();
   }
 
   return static_cast<size_t>(evCnt);
 }
 
-epoll_data_t
-simpleHTTP::Socket::getEvents(size_t i) const {
-  return events[i].data;
+epoll_data_t simple::Socket::getEvents(size_t index) const {
+  return _events.at(index).data;
 }
 
-void
-simpleHTTP::Socket::newConnection() {
-  sock_fd newSock = accept(sock, reinterpret_cast<struct sockaddr*>(&addr), &addrlen);
+void simple::Socket::newConnection() {
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) - Required for fitting C function
+  sock_fd newSock = accept(_sock, reinterpret_cast<struct sockaddr*>(&_addr), &_addrlen);
   if (newSock == -1) {
     return;
   }
 
+  // NOLINTNEXTLINE(hicpp-vararg, cppcoreguidelines-pro-type-vararg) - TODO: figure the best way to fit this
   fcntl(newSock, F_SETFL, SOCK_NONBLOCK);
-  pollEv.events = EPOLLIN;
-  pollEv.data.fd = newSock;
-  if (epoll_ctl(pollfd, EPOLL_CTL_ADD, newSock, &pollEv) == -1) {
+  _pollEv.events = EPOLLIN;
+  _pollEv.data.fd = newSock;
+  if (epoll_ctl(_pollfd, EPOLL_CTL_ADD, newSock, &_pollEv) == -1) {
     close(newSock);
     return;
   }
 }
 
-void
-simpleHTTP::Socket::closeConnection(sock_fd sck) {
-  if (pollfd != 0) {
-    if (epoll_ctl(pollfd, EPOLL_CTL_DEL, sck, &pollEv) == -1) {}
+void simple::Socket::closeConnection(sock_fd sck) {
+  if (_pollfd != 0) {
+    if (epoll_ctl(_pollfd, EPOLL_CTL_DEL, sck, &_pollEv) == -1) {
+    }
   }
   close(sck);
 }
 
-void
-simpleHTTP::Socket::Shutdown() {
-  if (sock != 0) {
-    shutdown(sock, SHUT_RDWR);
-    close(sock);
+// NOLINTNEXTLINE(readability-make-member-function-const) - Technically could be const, but it affects the socket
+void simple::Socket::shutdownSock() {
+  if (_sock != 0) {
+    shutdown(_sock, SHUT_RDWR);
+    close(_sock);
   }
-  if (pollfd != 0) {
-    close(pollfd);
+  if (_pollfd != 0) {
+    close(_pollfd);
   }
 }
 
-simpleHTTP::sock_fd
-simpleHTTP::Socket::fd() const {
-  return sock;
-}
+simple::sock_fd simple::Socket::fd() const { return _sock; }

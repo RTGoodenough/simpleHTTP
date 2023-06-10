@@ -1,27 +1,35 @@
+/**
+ * @file file_operations.cpp
+ * @author Rolland Goodenough (goodenoughr@gmail.com)
+ * @date 2023-06-10
+ * 
+ * @copyright Copyright 2023 Rolland Goodenough
+ * 
+ * This file is part of simpleHTTP which is released under the MIT License
+ * See file LICENSE for the full License
+ */
 
 #include <fstream>
 
 #include <util/file_operations.hpp>
 
-namespace simpleHTTP {
+namespace simple {
 
-File
-loadFile(const std::filesystem::path& filepath) {
+std::optional<File> loadFile(const std::filesystem::path& filepath) {
   if (!std::filesystem::exists(filepath) || std::filesystem::is_directory(filepath)) {
-    return {nullptr, 0};
+    return std::nullopt;
   }
 
   std::ifstream file(filepath);
   file.seekg(0, std::ios_base::end);
   size_t size = static_cast<size_t>(file.tellg());
 
-  char* data = reinterpret_cast<char*>(malloc(size + 1));
+  auto data = File(size);
 
   file.seekg(0, std::ios_base::beg);
-  file.read(data, static_cast<std::streamsize>(size));
-  data[size] = '\0';
+  file.read(data.data(), static_cast<std::streamsize>(size));
 
   file.close();
-  return {data, size};
+  return {data};
 }
-}  // namespace simpleHTTP
+}  // namespace simple

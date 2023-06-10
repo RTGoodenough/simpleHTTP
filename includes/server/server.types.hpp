@@ -12,10 +12,10 @@
 #ifndef SIMPLE_HTTP_SERVER_TYPES_HPP
 #define SIMPLE_HTTP_SERVER_TYPES_HPP
 
-#include <stdint.h>
+#include <cstdint>
 
-namespace simpleHTTP {
-typedef uint16_t port;
-}  // namespace simpleHTTP
+namespace simple {
+using port = uint16_t;
+}  // namespace simple
 
 #endif

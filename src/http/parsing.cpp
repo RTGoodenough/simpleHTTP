@@ -9,32 +9,23 @@
  * See file LICENSE for the full License
  */
 
+#include <httpparser/httprequestparser.h>
 #include <http/parsing.hpp>
+#include <optional>
 #include <util/string_view_manipulations.hpp>
 
-namespace simpleHTTP {
-namespace Parsing {
+namespace simple::http {
 
-std::optional<std::string_view>
-getRoute(std::string_view req) {
-
-  auto requestLine = split_first(req, "\r\n");
-  if (requestLine.empty()) {
-    return std::nullopt;
+std::optional<Request> parse(std::string_view reqStr) {
+  httpparser::HttpRequestParser parser;
+  Request                       req;
+  auto result = parser.parse(req.request(), reqStr.begin(), reqStr.end());
+  if (result == parser.ParsingCompleted) {
+    req.update();
+    return req;
   }
 
-  size_t start = requestLine.find(" /");
-  if (start == std::string_view::npos) {
-    return std::nullopt;
-  }
-
-  size_t end = requestLine.find_last_of(' ');
-  if (end == std::string_view::npos || end <= start) {
-    return std::nullopt;
-  }
-
-  return requestLine.substr(start + 1, end - start - 1);
+  return std::nullopt;
 }
 
-}  // namespace Parsing
-}  // namespace simpleHTTP
+}  // namespace simple::http

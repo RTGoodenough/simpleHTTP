@@ -2,76 +2,47 @@
  * @file page_manager.cpp
  * @author Rolland Goodenough (goodenoughr@gmail.com)
  * @date 2023-03-24
- * 
+ *
  * @copyright Copyright 2023 Rolland Goodenough
- * 
+ *
  * This file is part of simpleHTTP which is released under the MIT License
  * See file LICENSE for the full License
  */
 
 #include <filesystem>
 
+#include <pages/page_content.hpp>
 #include <pages/page_manager.hpp>
 
-bool checkPath(std::string_view);
+bool checkPath(std::string_view uri) { return uri.find("..") == std::string_view::npos; }
 
-bool
-checkPath(std::string_view uri) {
-  if (uri.find("..") != std::string_view::npos) {
-    return false;
-  }
-  return true;
-}
-
-namespace simpleHTTP {
-PageLoad
-Pages::loadPage(std::string_view uri) {
-
-  if (uri == "/")
-    return {true, PageContent{Content::HTML, useFile(basePath / "index.html")}};
-
-  if (!checkPath(uri))
-    return {false, PageContent{Content::HTML, useFile(basePath / "NotFound.html")}};
-
-  auto path = basePath / uri.substr(1);
-
-  if (!std::filesystem::exists(path) || std::filesystem::is_directory(path))
-    return {false, PageContent{Content::HTML, useFile(basePath / "NotFound.html")}};
-
-  auto type = fileType(path);
-  if (type == Content::INVALID)
-    return {false, PageContent{Content::HTML, useFile(basePath / "NotFound.html")}};
-
-  auto file = useFile(path);
-  if (file.content == nullptr)
-    return {false, PageContent{Content::HTML, useFile(basePath / "NotFound.html")}};
-
-  return {true, PageContent{type, file}};
-}
-
-void
-Pages::contentUsed(File content) {
-  if (content.content != nullptr)
-    delete[] content.content;
-}
-
-Content
-Pages::fileType(const std::filesystem::path& path) const {
-  if (!path.has_extension()) {
-    return Content::HTML;
+namespace simple {
+PageLoad Pages::loadPage(std::string_view uri) {
+  if (uri.empty() || (uri.size() == 1 && uri.at(0) == '/')) {
+    return {LoadResult::SUCCESS, _cache.getPage(_basePath / "index.html")};
   }
 
-  auto ext = path.extension();
-  if (ExtTypeMap.find(ext) == ExtTypeMap.end())
-    return Content::INVALID;
+  if (!checkPath(uri)) {
+    return {LoadResult::INVALID, _cache.getPage(_basePath / "NotFound.html")};
+  }
 
-  return ExtTypeMap.at(ext);
+  auto path = _basePath / uri.substr(1);
+  auto page = _cache.getPage(path);
+
+  if (page.data) {
+    return {LoadResult::SUCCESS, page};
+  }
+
+  return {LoadResult::NOT_FOUND, _cache.getPage(_basePath / "NotFound.html")};
 }
 
-File
-Pages::useFile(const std::filesystem::path& path) {
+File Pages::useFile(const std::filesystem::path& path) {
   auto file = loadFile(path);
-  return file;
-}
 
-}  // namespace simpleHTTP
+  if (file) {
+    return file.value();
+  }
+
+  return {};
+}
+}  // namespace simple

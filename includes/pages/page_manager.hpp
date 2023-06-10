@@ -15,25 +15,23 @@
 #include <filesystem>
 #include <string_view>
 
+#include <pages/page_cache.hpp>
 #include <pages/page_content.hpp>
 
-namespace simpleHTTP {
+namespace simple {
 class Pages {
  public:
   [[nodiscard]] PageLoad loadPage(std::string_view);
 
-  void contentUsed(File);
-
  private:
-  [[nodiscard]] PageContent useFile(std::string_view);
-  [[nodiscard]] Content     getContentType(const std::filesystem::path&) const;
+  PageCache             _cache;
+  std::filesystem::path _basePath = std::filesystem::current_path() / "temp/routes";
 
-  [[nodiscard]] File useFile(const std::filesystem::path&);
+  [[nodiscard]] PageContent    useFile(std::string_view);
+  [[nodiscard]] static Content getContentType(const std::filesystem::path&);
 
-  [[nodiscard]] Content fileType(const std::filesystem::path&) const;
-
-  std::filesystem::path basePath = std::filesystem::current_path() / "routes";
+  [[nodiscard]] static File useFile(const std::filesystem::path&);
 };
-}  // namespace simpleHTTP
+}  // namespace simple
 
 #endif

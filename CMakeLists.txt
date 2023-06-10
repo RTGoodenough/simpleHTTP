@@ -1,11 +1,16 @@
-cmake_minimum_required(VERSION 3.16)
-SET(PROJECT_NAME simpleHTTP)
-project(${PROJECT_NAME})
-SET(CMAKE_CXX_STANDARD 17)
-SET(CMAKE_CXX_STANDARD_REQUIRED)
+cmake_minimum_required(VERSION 3.14)
 
-SET(INCLUDE_DIR includes)
-SET(SRC_DIR src)
+OPTION(DEBUG_MODE OFF)
+
+set(PROJECT_NAME simpleHTTP)
+project(${PROJECT_NAME})
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+
+set(INCLUDE_DIR includes)
+set(SRC_DIR src)
 
 add_executable(
   ${PROJECT_NAME}
@@ -20,9 +25,25 @@ target_include_directories(
   ${INCLUDE_DIR}
 )
 
-target_compile_options(
-  ${PROJECT_NAME} 
-  PUBLIC
-  -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wswitch-default -Wundef -Werror -Wno-unused
+include_directories(
+  SYSTEM
+  ./deps
 )
+
+
+if (DEBUG_MODE)
+  set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize=null -fno-sanitize=alignment")
+  set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize=null -fno-sanitize=alignment")
+else()
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+target_compile_options(
+  ${PROJECT_NAME}
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic>
+)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ./../)

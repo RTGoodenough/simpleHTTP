@@ -16,12 +16,12 @@
 #include <string_view>
 #include <vector>
 
-namespace simpleHTTP {
+namespace simple {
 
-typedef std::vector<std::string_view> SubStrs;
+using SubStrs = std::vector<std::string_view>;
 
-std::string_view split_first(std::string_view str, std::string_view delim);
+std::string_view splitFirst(std::string_view str, std::string_view delim);
 
-}  // namespace simpleHTTP
+}  // namespace simple
 
 #endif

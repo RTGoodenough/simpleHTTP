@@ -15,11 +15,12 @@
 #include <filesystem>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include <types/data.types.hpp>
 
-namespace simpleHTTP {
-[[nodiscard]] File loadFile(const std::filesystem::path&);
-}  // namespace simpleHTTP
+namespace simple {
+[[nodiscard]] std::optional<File> loadFile(const std::filesystem::path&);
+}  // namespace simple
 
 #endif

@@ -14,8 +14,8 @@
 
 #include <vector>
 
-namespace simpleHTTP {
-typedef std::vector<char> ByteVector;
+namespace simple {
+using ByteVector = std::vector<char>;
 
 enum class Content {
   INVALID,
@@ -25,10 +25,7 @@ enum class Content {
   JAVASCRIPT,
 };
 
-struct File {
-  const char* content = nullptr;
-  size_t      length = 0;
-};
-}  // namespace simpleHTTP
+using File = std::vector<char>;
+}  // namespace simple
 
 #endif

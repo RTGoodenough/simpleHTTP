@@ -1,7 +1,7 @@
 /**
- * @file simple.cpp
+ * @file server_config.hpp
  * @author Rolland Goodenough (goodenoughr@gmail.com)
- * @date 2023-03-24
+ * @date 2023-06-10
  * 
  * @copyright Copyright 2023 Rolland Goodenough
  * 
@@ -9,9 +9,9 @@
  * See file LICENSE for the full License
  */
 
-#include <server/shttp_Server.hpp>
+#ifndef SIMPLE_SERVER_CONFIG_HPP
+#define SIMPLE_SERVER_CONFIG_HPP
 
-int main() {
-  simple::Server server;
-  server.start();
-}
+struct ServerConfig {};
+
+#endif

@@ -2,9 +2,9 @@
  * @file socket.hpp
  * @author Rolland Goodenough (goodenoughr@gmail.com)
  * @date 2023-03-24
- * 
+ *
  * @copyright Copyright 2023 Rolland Goodenough
- * 
+ *
  * This file is part of simpleHTTP which is released under the MIT License
  * See file LICENSE for the full License
  */
@@ -18,45 +18,53 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include <array>
 #include <stdexcept>
 #include <string>
 
 #include <server/server.types.hpp>
 #include <socket/socket.types.hpp>
 
-namespace simpleHTTP {
+namespace simple {
 class SocketException : public std::runtime_error {
  public:
-  SocketException(const std::string& message) : std::runtime_error(message) {}
-  static void Throw(const std::string& message) { throw SocketException(message); }
+  explicit SocketException(const std::string& message) : std::runtime_error(message) {}
+  static void error(const std::string& message) { throw SocketException(message); }
 };
 
 class Socket {
  public:
-  Socket(port);
-  ~Socket();
+  explicit Socket(port);
 
-  [[nodiscard]] size_t       poll_wait();
-  [[nodiscard]] epoll_data_t getEvents(size_t i) const;
+  [[nodiscard]] size_t       pollWait();
+  [[nodiscard]] epoll_data_t getEvents(size_t) const;
   [[nodiscard]] sock_fd      fd() const;
 
-  void Shutdown();
+  void shutdownSock();
   void newConnection();
-  void closeConnection(sock_fd sock);
+  void closeConnection(sock_fd);
 
  private:
-  sock_fd sock;
-  sock_fd pollfd;
+  sock_fd _sock;
+  sock_fd _pollfd;
 
-  sockaddr_in addr;
-  socklen_t   addrlen = sizeof(addr);
+  sockaddr_in _addr;
+  socklen_t   _addrlen = sizeof(_addr);
 
-  static const int maxEv = 1000;
-  static const int maxConnections = 1000;
+  static const int MAX_EV = 1000;
+  static const int MAX_CONNECTIONS = 1000;
 
-  epoll_event pollEv;
-  epoll_event events[maxEv];
+  epoll_event                     _pollEv;
+  std::array<epoll_event, MAX_EV> _events;
+
+ public:
+  Socket(const Socket&) = default;
+  Socket& operator=(const Socket&) = default;
+  Socket(Socket&&) = default;
+  Socket& operator=(Socket&&) = default;
+  ~Socket();
 };
-}  // namespace simpleHTTP
+
+}  // namespace simple
 
 #endif

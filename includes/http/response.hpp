@@ -18,7 +18,7 @@
 #include <http/types/status.types.hpp>
 #include <types/data.types.hpp>
 
-namespace simpleHTTP {
+namespace simple::http {
 class Response {
  public:
   ByteVector build();
@@ -26,25 +26,25 @@ class Response {
   Response&            setStatus(Status);
   [[nodiscard]] Status getStatus() const;
 
-  Response&                            setHeader(Header, std::string_view);
-  [[nodiscard]] const std::string_view getHeader(Header) const;
+  Response&                      setHeader(Header, std::string_view);
+  [[nodiscard]] std::string_view getHeader(Header) const;
 
-  Response& setContent(PageContent);
+  Response& setContent(PageContentView);
 
   Response& setContentType(Content);
 
  private:
-  Status                                       status;
-  std::unordered_map<Header, std::string_view> headers;
-  PageContent                                  page;
-  std::string                                  content_length;
+  Status                                       _status;
+  std::unordered_map<Header, std::string_view> _headers;
+  PageContentView                              _page;
+  std::string                                  _content_length;
 
   size_t totalLength() const;
 
-  inline void build_addResponseLine(ByteVector&) const;
-  inline void build_addHeader(Header, const std::string_view, ByteVector&) const;
-  inline void build_addContent(PageContent, ByteVector&) const;
+  inline void        buildAddResponseLine(ByteVector&) const;
+  static inline void buildAddHeader(Header, std::string_view, ByteVector&);
+  static inline void buildAddContent(PageContentView, ByteVector&);
 };
-}  // namespace simpleHTTP
+}  // namespace simple::http
 
 #endif

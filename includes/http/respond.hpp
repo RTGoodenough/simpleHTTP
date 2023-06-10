@@ -19,12 +19,10 @@
 #include <socket/socket.types.hpp>
 #include <types/data.types.hpp>
 
-namespace simpleHTTP {
-namespace Respond {
-void WebPage(Status, PageContent, sock_fd);
-void NotFound(sock_fd);
-void BadRequest(sock_fd);
-}  // namespace Respond
-}  // namespace simpleHTTP
+namespace simple::respond {
+void webPage(http::Status, PageContentView, sock_fd);
+void notFound(sock_fd);
+void badRequest(sock_fd);
+}  // namespace simple::respond
 
 #endif

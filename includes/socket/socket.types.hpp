@@ -12,8 +12,8 @@
 #ifndef SIMPLE_HTTP_SOCKET_TYPES_HPP
 #define SIMPLE_HTTP_SOCKET_TYPES_HPP
 
-namespace simpleHTTP {
-typedef int sock_fd;
+namespace simple {
+using sock_fd = int;
 }
 
 #endif

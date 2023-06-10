@@ -15,22 +15,43 @@
 #include <filesystem>
 #include <unordered_map>
 
+#include <types/data.types.hpp>
 #include <util/file_operations.hpp>
 
-namespace simpleHTTP {
-
-extern const std::unordered_map<Content, std::string> ContentStrs;
-extern const std::unordered_map<std::string, Content> ExtTypeMap;
+namespace simple {
+const std::string& toContentStr(Content);
+Content            toContentType(const std::string&);
 
 struct PageContent {
   Content type;
   File    file;
 };
 
-struct PageLoad {
-  bool        found;
-  PageContent content;
+struct PageContentView {
+  Content     type{Content::INVALID};
+  const char* data{nullptr};
+  size_t      size{0};
 };
-}  // namespace simpleHTTP
+
+enum class LoadResult {
+  NOT_FOUND,
+  INVALID,
+  SUCCESS,
+};
+
+struct PageLoad {
+  LoadResult      found{};
+  PageContentView content;
+};
+
+inline Content fileType(const std::filesystem::path& path) {
+  if (!path.has_extension()) {
+    return Content::HTML;
+  }
+
+  auto ext = path.extension();
+  return toContentType(ext);
+}
+}  // namespace simple
 
 #endif
