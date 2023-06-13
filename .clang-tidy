@@ -8,7 +8,9 @@ Checks: >
   -altera-*,
   -android-*,
   -modernize-use-trailing-return-type,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -readability-braces-around-statements,
+  -hicpp-braces-around-statements
 
 WarningsAsErrors: "*"
 

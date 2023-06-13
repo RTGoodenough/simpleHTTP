@@ -15,10 +15,6 @@
 #include <string_view>
 #include <unordered_map>
 
-#include <iostream>
-
-#include <httpparser/request.h>
-
 #include <http/types/header.types.hpp>
 #include <http/types/http.types.hpp>
 
@@ -28,56 +24,28 @@ class Request {
   [[nodiscard]] inline std::string_view getHeader(Header hdrType) const {
     return _headers.at(hdrType);
   }
-  [[nodiscard]] inline std::string_view     getUri() const { return _uri; }
-  [[nodiscard]] inline http::Method         getMethod() const { return _method; }
-  [[nodiscard]] inline std::string_view     getContent() const { return _content; }
-  [[nodiscard]] inline httpparser::Request& request() { return _req; };
+  [[nodiscard]] inline http::Uri        getUri() const { return _uri; }
+  [[nodiscard]] inline http::Method     getMethod() const { return _method; }
+  [[nodiscard]] inline std::string_view getContent() const { return _content; }
 
-  inline void update() { load(); }
+  inline void setUri(http::Uri uri) { _uri = uri; }
+  inline void setHeader(Header hdr, std::string_view val) { _headers.at(hdr) = val; }
+  inline void setContent(std::string_view content) { _content = content; }
+  inline void setMethod(http::Method method) { _method = method; }
 
  private:
   http::Method                                 _method{Method::GET};
-  std::string_view                             _uri;
+  http::Uri                                    _uri;
   std::unordered_map<Header, std::string_view> _headers;
   std::string_view                             _content;
-
-  // TODO(rolland): remove with custom parser
-  httpparser::Request _req;
-  inline void         load() {
-    _method = methodFromStr(_req.method);
-    _uri = _req.uri;
-
-    for (const auto& hdr : _req.headers) {
-      _headers[headerFromStr(hdr.name)] = hdr.value;
-    }
-
-    _content = std::string_view(_req.content.data(), _req.content.size());
-  }
 
  public:
   Request() = default;
   ~Request() = default;
-  Request(const Request& other) : _method(other._method), _req(other._req) { load(); };
-  Request(Request&& other) noexcept
-      : _method(other._method), _req(std::move(other._req)) {
-    load();
-  };
-  Request& operator=(const Request& other) {
-    if (&other == this) {
-      return *this;
-    }
-
-    _method = other._method;
-    _req = other._req;
-    load();
-    return *this;
-  };
-  Request& operator=(Request&& other) noexcept {
-    _method = other._method;
-    _req = std::move(other._req);
-    load();
-    return *this;
-  };
+  Request(const Request& other) = default;
+  Request(Request&& other) noexcept = default;
+  Request& operator=(const Request& other) = default;
+  Request& operator=(Request&& other) noexcept = default;
 };
 }  // namespace simple::http
 

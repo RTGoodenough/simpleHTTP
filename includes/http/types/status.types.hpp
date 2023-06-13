@@ -12,8 +12,8 @@
 #ifndef SIMPLE_HTTP_TYPES_HPP
 #define SIMPLE_HTTP_TYPES_HPP
 
+#include <map>
 #include <string>
-#include <unordered_map>
 
 namespace simple::http {
 enum class Status {
@@ -69,7 +69,7 @@ enum class Status {
 };
 
 inline const std::string& toStatusStr(Status status) {
-  static const std::unordered_map<Status, const std::string> STATUS_STRS{
+  static const std::map<Status, const std::string> STATUS_STRS{
       {Status::CONTINUE, "Continue"},
       {Status::SWITCHING_PROTOCOLS, "Switching Protocols"},
       {Status::OK, "OK"},
@@ -124,7 +124,7 @@ inline const std::string& toStatusStr(Status status) {
 }
 
 inline const std::string& toStatusNumStr(Status status) {
-  static const std::unordered_map<Status, const std::string> STATUS_NUMBER_STRS{
+  static const std::map<Status, const std::string> STATUS_NUMBER_STRS{
       {Status::CONTINUE, "100"},
       {Status::SWITCHING_PROTOCOLS, "101"},
       {Status::OK, "200"},

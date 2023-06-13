@@ -48,6 +48,9 @@ void simple::Server::handleData(sock_fd sock) {
 
 void simple::Server::handleRequest(sock_fd sock, const char* req, size_t size) {
   auto request = simple::http::parse(std::string_view(req, size));
+
+  // parse request, get length, read length of bytes
+
   if (!request) {
     respond::badRequest(sock);
     return;

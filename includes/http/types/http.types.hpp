@@ -12,8 +12,8 @@
 #ifndef SIMPLE_HTTP_HTTP_TYPES_HPP
 #define SIMPLE_HTTP_HTTP_TYPES_HPP
 
+#include <map>
 #include <string>
-#include <unordered_map>
 
 namespace simple::http {
 enum class Method {
@@ -26,17 +26,27 @@ enum class Method {
   HEAD,
   TRACE,
   PATCH,
+  INVALID,
 };
 
-inline Method methodFromStr(const std::string& method) {
-  static const std::unordered_map<std::string, Method> M_MAP = {
+struct Uri {
+  std::string_view scheme;
+  std::string_view host;
+  std::string_view port;
+};
+
+inline Method methodFromStr(std::string_view method) {
+  static const std::map<std::string, Method, std::less<>> M_MAP = {
       {"GET", Method::GET},         {"PUT", Method::PUT},
       {"POST", Method::POST},       {"DELETE", Method::DELETE},
       {"CONNECT", Method::CONNECT}, {"OPTIONS", Method::OPTIONS},
       {"HEAD", Method::HEAD},       {"TRACE", Method::TRACE},
       {"PATCH", Method::PATCH},
   };
-  return M_MAP.at(method);
+  auto iter = M_MAP.find(method);
+  if (iter == M_MAP.end()) return Method::INVALID;
+
+  return iter->second;
 }
 }  // namespace simple::http
 

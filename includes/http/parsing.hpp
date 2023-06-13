@@ -15,14 +15,34 @@
 #include <optional>
 #include <string_view>
 
-#include <httpparser/httprequestparser.h>
-#include <httpparser/httpresponseparser.h>
-
+#include <http/lexer/lexer.hpp>
 #include <http/types/request.hpp>
 #include <http/types/status.types.hpp>
 
 namespace simple::http {
-[[nodiscard]] std::optional<http::Request> parse(std::string_view);
+
+class Parser {
+ public:
+  [[nodiscard]] std::optional<http::Request> parse(std::string_view);
+
+ private:
+  Lexer   _lexer;
+  Token   _token;
+  Request _req;
+
+  bool match(TokenType);
+  void nextToken();
+
+  bool method();
+  bool uri();
+  bool header();
+
+  std::optional<http::Uri> originForm();
+  std::optional<http::Uri> absoluteForm();
+  std::optional<http::Uri> authorityForm();
+  std::optional<http::Uri> asteriskForm();
+};
+
 }  // namespace simple::http
 
 #endif

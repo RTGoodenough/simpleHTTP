@@ -12,8 +12,8 @@
 #ifndef SIMPLE_HTPP_HEADER_TYPES
 #define SIMPLE_HTPP_HEADER_TYPES
 
+#include <map>
 #include <string>
-#include <unordered_map>
 
 namespace simple::http {
 enum class Header {
@@ -94,7 +94,7 @@ enum class Header {
 };
 
 inline const std::string& toHeaderStr(Header hdr) {
-  static const std::unordered_map<Header, std::string> HEADER_STRS{
+  static const std::map<Header, std::string> HEADER_STRS{
       {Header::A_IM, "A-IM"},
       {Header::ACCEPT, "Accept"},
       {Header::ACCEPT_CHARSET, "Accept-Charset"},
@@ -173,8 +173,8 @@ inline const std::string& toHeaderStr(Header hdr) {
   return HEADER_STRS.at(hdr);
 }
 
-inline Header headerFromStr(const std::string& hdr) {
-  static const std::unordered_map<std::string, Header> HEADER_STRS{
+inline Header headerFromStr(std::string_view hdr) {
+  static const std::map<std::string, Header, std::less<>> HEADER_STRS{
       {"A-IM", Header::A_IM},
       {"Accept", Header::ACCEPT},
       {"Accept-Charset", Header::ACCEPT_CHARSET},

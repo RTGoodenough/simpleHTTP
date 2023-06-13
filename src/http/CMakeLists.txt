@@ -5,4 +5,5 @@ target_sources(
   parsing.cpp
   respond.cpp
   response.cpp
+  lexer/lexer.cpp
 )
