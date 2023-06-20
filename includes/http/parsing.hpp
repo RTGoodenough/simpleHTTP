@@ -28,19 +28,22 @@ class Parser {
  private:
   Lexer   _lexer;
   Token   _token;
+  Token   _lookahead;
   Request _req;
 
-  bool match(TokenType);
-  void nextToken();
+  [[nodiscard]] bool match(TokenType);
+  void               nextToken();
 
-  bool method();
-  bool uri();
-  bool header();
+  [[nodiscard]] bool method();
+  [[nodiscard]] bool uri();
+  [[nodiscard]] bool headers();
+  [[nodiscard]] bool version();
+  [[nodiscard]] bool query();
 
-  std::optional<http::Uri> originForm();
-  std::optional<http::Uri> absoluteForm();
-  std::optional<http::Uri> authorityForm();
-  std::optional<http::Uri> asteriskForm();
+  [[nodiscard]] std::optional<http::UriTarget> originForm();
+  [[nodiscard]] std::optional<http::UriTarget> absoluteForm();
+  [[nodiscard]] std::optional<http::UriTarget> authorityForm();
+  [[nodiscard]] std::optional<http::UriTarget> asteriskForm();
 };
 
 }  // namespace simple::http

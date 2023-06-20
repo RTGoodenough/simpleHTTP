@@ -16,13 +16,14 @@
 namespace simple {
 
 constexpr int ALPHABET_LENGTH = 26;
-constexpr int DICT_SIZE = 38;
+constexpr int DICT_SIZE = 39;
 
 struct TrieEntry {
   TokenType   type;
   std::string str;
 };
 
+// TODO(rolland): need to add headers for sec-ch-ua etc. or handle unknown headers
 static const std::vector<TrieEntry>& getReservedWords() {
   static const std::vector<TrieEntry> ENTRIES{
       {TokenType::METHOD, "CONNECT"},
@@ -108,6 +109,8 @@ static const std::vector<TrieEntry>& getReservedWords() {
       {TokenType::HEADER, "X-Frame-Options"},
       {TokenType::VERSION, "HTTP/1.0"},
       {TokenType::VERSION, "HTTP/1.1"},
+      {TokenType::SCHEME, "http"},
+      {TokenType::SCHEME, "https"},
   };
 
   return ENTRIES;
@@ -166,7 +169,7 @@ class OpTrie {
       ++str;
     }
 
-    return {TokenType::ID, std::string_view(start, std::distance(start, str))};
+    return {curr->type, std::string_view(start, std::distance(start, str))};
   }
 
  private:

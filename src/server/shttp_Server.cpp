@@ -47,7 +47,7 @@ void simple::Server::handleData(sock_fd sock) {
 // NOLINTEND
 
 void simple::Server::handleRequest(sock_fd sock, const char* req, size_t size) {
-  auto request = simple::http::parse(std::string_view(req, size));
+  auto request = simple::http::Parser().parse(std::string_view(req, size));
 
   // parse request, get length, read length of bytes
 
@@ -56,7 +56,7 @@ void simple::Server::handleRequest(sock_fd sock, const char* req, size_t size) {
     return;
   }
 
-  auto page = _pages.loadPage(request->getUri());
+  auto page = _pages.loadPage(request->getUri().uri);
   respond::webPage(
       (page.found == LoadResult::SUCCESS ? http::Status::OK : http::Status::NOT_FOUND),
       page.content, sock);

@@ -6,7 +6,9 @@
 
 #include <http/lexer/lexer.hpp>
 #include <http/lexer/token.hpp>
-#include "http/lexer/trie.hpp"
+#include <http/lexer/trie.hpp>
+
+#include <logging/logging.hpp>
 
 namespace simple {
 
@@ -109,6 +111,9 @@ Token Lexer::nextToken() {
       case '~':
         ++_iter;
         return {TokenType::TILDE, std::string_view{}};
+      case ':':
+        ++_iter;
+        return {TokenType::COLON, std::string_view{}};
       default:
         break;
     }
@@ -136,17 +141,21 @@ Token Lexer::nextLine() {
     if (*_iter == '\r') {
       ++_iter;
       if (*_iter == '\n') {
-        _iter -= 2;
+        _iter -= 1;
         break;
       }
     }
     ++_iter;
   }
 
-  return {TokenType::NUMBER, std::string_view(start, std::distance(start, _iter))};
+  return {TokenType::ID, std::string_view(start, std::distance(start, _iter))};
 }
 
-Token Lexer::parseString() { return getTrie().traverse(_iter, _data.end()); }
+Token Lexer::parseString() {
+  auto val = getTrie().traverse(_iter, _data.end());
+  debug(val.value);
+  return val;
+}
 
 Token Lexer::parseNumber() {
   const auto* start = _iter;
@@ -175,6 +184,10 @@ void Lexer::skipWhiteSpace() {
   while (*_iter == ' ') {
     ++_iter;
   }
+}
+
+std::string_view Lexer::content() {
+  return {_iter, static_cast<size_t>(std::distance(_iter, _data.end()))};
 }
 
 // ------------------------------------ CONSTRUCTORS ------------------------------------------------------

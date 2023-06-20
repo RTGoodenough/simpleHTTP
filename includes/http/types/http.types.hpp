@@ -14,6 +14,7 @@
 
 #include <map>
 #include <string>
+#include <string_view>
 
 namespace simple::http {
 enum class Method {
@@ -29,9 +30,29 @@ enum class Method {
   INVALID,
 };
 
-struct Uri {
-  std::string_view scheme;
+enum class Version {
+  HTTP1,
+  HTTP11,
+  INVALID,
+};
+
+enum class Scheme {
+  HTTP,
+  HTTPS,
+};
+
+enum class UriForm {
+  ORIGIN,
+  ABSOLUTE,
+  AUTHORITY,
+  ASTERISK,
+  INVALID,
+};
+
+struct UriTarget {
+  Scheme           scheme;
   std::string_view host;
+  std::string_view uri;
   std::string_view port;
 };
 
@@ -48,6 +69,19 @@ inline Method methodFromStr(std::string_view method) {
 
   return iter->second;
 }
+
+inline Version versionFromStr(std::string_view version) {
+  static const std::map<std::string, Version, std::less<>> V_MAP = {
+      {"HTTP/1.0", Version::HTTP1},
+      {"HTTP/1.1", Version::HTTP11},
+  };
+
+  auto iter = V_MAP.find(version);
+  if (iter == V_MAP.end()) return Version::INVALID;
+
+  return iter->second;
+}
+
 }  // namespace simple::http
 
 #endif

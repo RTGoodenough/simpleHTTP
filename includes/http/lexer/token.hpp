@@ -13,6 +13,7 @@ enum class TokenType {
   HEADER,
   METHOD,
   VERSION,
+  SCHEME,
   // Status
   CONTINUE,
   SWITCHING_PROTOCOLS,
@@ -81,6 +82,7 @@ enum class TokenType {
   MINUS,
   FSLASH,
   SEMICOLON,
+  COLON,
   GT,
   LT,
   EQ,
