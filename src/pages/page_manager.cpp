@@ -11,6 +11,8 @@
 
 #include <filesystem>
 
+#include <logging/logging.hpp>
+
 #include <pages/page_content.hpp>
 #include <pages/page_manager.hpp>
 
@@ -30,9 +32,11 @@ PageLoad Pages::loadPage(std::string_view uri) {
   auto page = _cache.getPage(path);
 
   if (page.data) {
+    debug("Page Loaded");
     return {LoadResult::SUCCESS, page};
   }
 
+  debug("Page Not Found");
   return {LoadResult::NOT_FOUND, _cache.getPage(_basePath / "NotFound.html")};
 }
 

@@ -41,5 +41,31 @@ TEST(Parsing, ParseRequest) {
 
   auto parsed2 = sut.parse(req2);
 
+  if (parsed2) {
+    EXPECT_EQ(parsed2->getContent(),
+              "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<string "
+              "xmlns=\"http://clearforest.com/\">string</string>");
+    EXPECT_EQ(parsed2->getMethod(), simple::http::Method::POST);
+    EXPECT_EQ(parsed2->getUri().host, "www.tutorialspoint.com");
+    EXPECT_EQ(parsed2->getUri().uri, "/cgi-bin/process.cgi");
+    EXPECT_EQ(parsed2->getHeader(simple::http::Header::ACCEPT_LANGUAGE), "en-us");
+    EXPECT_EQ(parsed2->getHeader(simple::http::Header::ACCEPT_ENCODING), "gzip, deflate");
+    EXPECT_EQ(parsed2->getHeader(simple::http::Header::CONNECTION), "Keep-Alive");
+    EXPECT_EQ(parsed2->getHeader(simple::http::Header::CONTENT_TYPE),
+              "text/xml; charset=utf-8");
+    EXPECT_EQ(parsed2->getHeader(simple::http::Header::CONTENT_LENGTH), "98");
+  }
+
   EXPECT_TRUE(parsed2);
+}
+
+TEST(Parsing, ParseRequestImproper) {
+  simple::http::Parser sut;
+  std::string          req =
+      "GET /hello.html HTTP/1.1\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE5.01; "
+      "Windows "
+      "NT)\r\nHost: www.tutorialspoint.com\r\nAccept-Language: en-us\r\nAccept-Encoding: "
+      "gzip, deflate\r\nConnection: Keep-Alive\r\n\r\ntest";
+
+  auto parsed = sut.parse(req);
 }

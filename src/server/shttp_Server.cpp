@@ -47,11 +47,13 @@ void simple::Server::handleData(sock_fd sock) {
 // NOLINTEND
 
 void simple::Server::handleRequest(sock_fd sock, const char* req, size_t size) {
+  debug("New Request");
   auto request = simple::http::Parser().parse(std::string_view(req, size));
 
   // parse request, get length, read length of bytes
 
   if (!request) {
+    debug("Bad Request");
     respond::badRequest(sock);
     return;
   }

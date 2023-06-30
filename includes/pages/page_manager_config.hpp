@@ -9,9 +9,13 @@
  * See file LICENSE for the full License
  */
 
+#include <filesystem>
+
 #ifndef SIMPLE_PAGE_MANAGER_CONFIG_HPP
 #define SIMPLE_PAGE_MANAGER_CONFIG_HPP
 
-struct PageManagerConfig {};
+struct PageManagerConfig {
+  std::filesystem::path basePath{"./routes"};
+};
 
 #endif

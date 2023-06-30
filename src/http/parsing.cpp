@@ -9,17 +9,18 @@
  * See file LICENSE for the full License
  */
 
-#include <http/lexer/token.hpp>
-#include <http/parsing.hpp>
-#include <http/types/http.types.hpp>
 #include <iterator>
 #include <optional>
 #include <stdexcept>
 #include <string_view>
+
+#include <http/lexer/token.hpp>
+#include <http/parsing.hpp>
+#include <http/types/header.types.hpp>
+#include <http/types/http.types.hpp>
+#include <http/types/request.hpp>
+#include <logging/logging.hpp>
 #include <util/string_view_manipulations.hpp>
-#include "http/types/header.types.hpp"
-#include "http/types/request.hpp"
-#include "logging/logging.hpp"
 
 namespace simple::http {
 
@@ -28,19 +29,25 @@ std::optional<Request> Parser::parse(std::string_view reqStr) {
   _lexer = Lexer(reqStr);
   nextToken();
 
+  debug("Method");
   if (!method()) return std::nullopt;
+  debug("uri");
   if (!uri()) return std::nullopt;
+  debug("version");
   if (!version()) return std::nullopt;
   if (!match(TokenType::LINE_END)) return std::nullopt;
+  debug("headers");
   if (!headers()) return std::nullopt;
 
   if (!_lookahead.isType(TokenType::LINE_END)) return std::nullopt;
 
+  debug("Content");
   _req.setContent(_lexer.content());
 
   if (_req.getHeader(Header::HOST).empty()) return std::nullopt;
   _req.setTargetHost(_req.getHeader(Header::HOST));
 
+  debug("return");
   return _req;
 }
 
@@ -127,7 +134,20 @@ bool Parser::headers() {
 }
 
 bool Parser::query() {
-  // TODO(rolland) this
+  // TODO (rolland) : fully parse query, currently just accepts everything into a string_view
+  if (_lookahead.type != TokenType::QUESTION) return true;
+  nextToken();
+  const char* begin = _token.value.end() + 1;
+  const char* end = nullptr;
+
+  while (_lookahead.isType(TokenType::ID) || _lookahead.isType(TokenType::AMPER) ||
+         _lookahead.isType(TokenType::EQ)) {
+    nextToken();
+  }
+  end = _lookahead.value.begin();
+
+  _req.setQuery(std::string_view(begin, std::distance(begin, end - 1)));
+
   return true;
 }
 
@@ -138,9 +158,8 @@ std::optional<http::UriTarget> Parser::originForm() {
     nextToken();
   }
   end = _lookahead.value.begin();
-  if (_lookahead.isType(TokenType::QUESTION)) {
-    if (!query()) return std::nullopt;
-  }
+  if (!query()) return std::nullopt;
+
   return http::UriTarget{Scheme::HTTP, std::string_view{},
                          std::string_view(begin, std::distance(begin, end - 1)), "80"};
 }
@@ -158,7 +177,6 @@ std::optional<http::UriTarget> Parser::authorityForm() {
 }
 
 std::optional<http::UriTarget> Parser::asteriskForm() {
-  //TODO(rolland) this
   if (!match(TokenType::ASTERISK)) return std::nullopt;
   return http::UriTarget{Scheme::HTTP, {}, "*", {}};
 }

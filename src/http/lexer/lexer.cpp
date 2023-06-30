@@ -153,7 +153,6 @@ Token Lexer::nextLine() {
 
 Token Lexer::parseString() {
   auto val = getTrie().traverse(_iter, _data.end());
-  debug(val.value);
   return val;
 }
 

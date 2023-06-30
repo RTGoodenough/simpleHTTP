@@ -14,6 +14,7 @@
 
 #include <map>
 #include <string>
+#include "logging/logging.hpp"
 
 namespace simple::http {
 enum class Header {
@@ -169,7 +170,6 @@ inline const std::string& toHeaderStr(Header hdr) {
       {Header::WWW_AUTHENTICATE, "WWW-Authenticate"},
       {Header::X_FRAME_OPTIONS, "X-Frame-Options"},
   };
-  // TODO(rolland) error handle
   return HEADER_STRS.at(hdr);
 }
 
@@ -251,7 +251,7 @@ inline Header headerFromStr(std::string_view hdr) {
   };
   auto iter = HEADER_STRS.find(hdr);
   if (iter == HEADER_STRS.end()) {
-    // TODO(rolland): alert
+    warn("Unknown Header: " + std::string(hdr));
     return Header::UKNOWN;
   }
 

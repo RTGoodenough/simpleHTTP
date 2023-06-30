@@ -39,6 +39,7 @@ void badRequest(sock_fd socket) {
   res.setStatus(http::Status::BAD_REQUEST);
 
   auto data = res.build();
+  debug({data.data(), data.size()});
   sendData(data, socket);
 }
 
