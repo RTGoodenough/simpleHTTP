@@ -12,12 +12,12 @@
 
 namespace simple {
 
-inline const OpTrie& getTrie() {
+inline auto getTrie() -> const OpTrie& {
   static const OpTrie TRIE{};
   return TRIE;
 }
 
-Token Lexer::nextToken() {
+auto Lexer::nextToken() -> Token {
   while (_iter != _data.end()) {
     skipWhiteSpace();
     switch (*_iter) {
@@ -134,7 +134,7 @@ Token Lexer::nextToken() {
   return Token{TokenType::END, {}};
 }
 
-Token Lexer::nextLine() {
+auto Lexer::nextLine() -> Token {
   skipWhiteSpace();
   const char* start = _iter;
   while (_iter != _data.end()) {
@@ -151,12 +151,12 @@ Token Lexer::nextLine() {
   return {TokenType::ID, std::string_view(start, std::distance(start, _iter))};
 }
 
-Token Lexer::parseString() {
+auto Lexer::parseString() -> Token {
   auto val = getTrie().traverse(_iter, _data.end());
   return val;
 }
 
-Token Lexer::parseNumber() {
+auto Lexer::parseNumber() -> Token {
   const auto* start = _iter;
   while (std::isdigit(*_iter) || *_iter == '.') {
     ++_iter;
@@ -164,7 +164,7 @@ Token Lexer::parseNumber() {
   return {TokenType::NUMBER, std::string_view(start, std::distance(start, _iter))};
 }
 
-Token Lexer::newLine() {
+auto Lexer::newLine() -> Token {
   ++_iter;
 
   if (_iter == _data.end()) {
@@ -185,7 +185,7 @@ void Lexer::skipWhiteSpace() {
   }
 }
 
-std::string_view Lexer::content() {
+auto Lexer::content() -> std::string_view {
   return {_iter, static_cast<size_t>(std::distance(_iter, _data.end()))};
 }
 
@@ -197,7 +197,7 @@ Lexer::Lexer(const Lexer& other) noexcept : _data(other._data), _iter(_data.begi
 
 Lexer::Lexer(Lexer&& other) noexcept : _data(other._data), _iter(_data.begin()) {}
 
-Lexer& Lexer::operator=(const Lexer& other) noexcept {
+auto Lexer::operator=(const Lexer& other) noexcept -> Lexer& {
   if (this == &other) {
     return *this;
   }
@@ -207,7 +207,7 @@ Lexer& Lexer::operator=(const Lexer& other) noexcept {
   return *this;
 }
 
-Lexer& Lexer::operator=(Lexer&& other) noexcept {
+auto Lexer::operator=(Lexer&& other) noexcept -> Lexer& {
   _data = other._data;
   _iter = _data.begin();
   return *this;

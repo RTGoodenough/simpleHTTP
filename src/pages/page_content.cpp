@@ -13,7 +13,7 @@
 #include "types/data.types.hpp"
 
 namespace simple {
-const std::string& toContentStr(Content contentType) {
+auto toContentStr(Content contentType) -> const std::string& {
   static const std::unordered_map<Content, std::string> CONTENT_STRS = {
       {Content::HTML, "text/html"},
       {Content::JAVASCRIPT, "application/javascript"},
@@ -21,9 +21,9 @@ const std::string& toContentStr(Content contentType) {
 
   return CONTENT_STRS.at(contentType);
 }
-Content toContentType(const std::string& fileExt) {
-  static const std::unordered_map<std::string, Content> EXT_TYPE_MAP{
-      {".html", Content::HTML}, {".js", Content::JAVASCRIPT}};
+auto toContentType(const std::string& fileExt) -> Content {
+  static const std::unordered_map<std::string, Content> EXT_TYPE_MAP{{".html", Content::HTML},
+                                                                     {".js", Content::JAVASCRIPT}};
 
   if (EXT_TYPE_MAP.find(fileExt) == EXT_TYPE_MAP.end()) {
     return Content::INVALID;

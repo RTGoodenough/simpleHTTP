@@ -11,7 +11,7 @@
 
 #include <util/string_view_manipulations.hpp>
 
-std::string_view simple::splitFirst(std::string_view str, std::string_view delim) {
+auto simple::splitFirst(std::string_view str, std::string_view delim) -> std::string_view {
   const size_t pos = str.find(delim);
   if (pos == std::string_view::npos) {
     return {};

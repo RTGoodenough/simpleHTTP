@@ -23,7 +23,7 @@ namespace simple::http {
 
 class Parser {
  public:
-  [[nodiscard]] std::optional<http::Request> parse(std::string_view);
+  [[nodiscard]] auto parse(std::string_view) -> std::optional<http::Request>;
 
  private:
   Lexer   _lexer;
@@ -31,19 +31,19 @@ class Parser {
   Token   _lookahead;
   Request _req;
 
-  [[nodiscard]] bool match(TokenType);
+  [[nodiscard]] auto match(TokenType) -> bool;
   void               nextToken();
 
-  [[nodiscard]] bool method();
-  [[nodiscard]] bool uri();
-  [[nodiscard]] bool headers();
-  [[nodiscard]] bool version();
-  [[nodiscard]] bool query();
+  [[nodiscard]] auto method() -> bool;
+  [[nodiscard]] auto uri() -> bool;
+  [[nodiscard]] auto headers() -> bool;
+  [[nodiscard]] auto version() -> bool;
+  [[nodiscard]] auto query() -> bool;
 
-  [[nodiscard]] std::optional<http::UriTarget> originForm();
-  [[nodiscard]] std::optional<http::UriTarget> absoluteForm();
-  [[nodiscard]] std::optional<http::UriTarget> authorityForm();
-  [[nodiscard]] std::optional<http::UriTarget> asteriskForm();
+  [[nodiscard]] auto originForm() -> std::optional<http::UriTarget>;
+  [[nodiscard]] auto absoluteForm() -> std::optional<http::UriTarget>;
+  [[nodiscard]] auto authorityForm() -> std::optional<http::UriTarget>;
+  [[nodiscard]] auto asteriskForm() -> std::optional<http::UriTarget>;
 };
 
 }  // namespace simple::http

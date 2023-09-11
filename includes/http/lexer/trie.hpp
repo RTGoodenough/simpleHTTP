@@ -24,7 +24,7 @@ struct TrieEntry {
 };
 
 // TODO(rolland): need to add headers for sec-ch-ua etc. or handle unknown headers
-static const std::vector<TrieEntry>& getReservedWords() {
+static auto getReservedWords() -> const std::vector<TrieEntry>& {
   static const std::vector<TrieEntry> ENTRIES{
       {TokenType::METHOD, "CONNECT"},
       {TokenType::METHOD, "DELETE"},
@@ -229,7 +229,7 @@ class OpTrie {
     curr->type = type;
   }
 
-  [[nodiscard]] Token traverse(const char*& str, const char* const end) const {
+  [[nodiscard]] auto traverse(const char*& str, const char* const end) const -> Token {
     TrieNode*   curr = _root;
     const char* start = str;
 
@@ -312,10 +312,8 @@ class OpTrie {
     return idx;
   }
 
-  [[nodiscard]] static Token completeID(const char* start, const char*& str,
-                                        const char* const end) {
-    while (str < end &&
-           (std::isalpha(*str) || *str == '.' || *str == '-' || *str == '_')) {
+  [[nodiscard]] static Token completeID(const char* start, const char*& str, const char* const end) {
+    while (str < end && (std::isalpha(*str) || *str == '.' || *str == '-' || *str == '_')) {
       ++str;
     }
     return {TokenType::ID, std::string_view(start, std::distance(start, str))};

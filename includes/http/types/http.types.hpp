@@ -56,13 +56,11 @@ struct UriTarget {
   std::string_view port;
 };
 
-inline Method methodFromStr(std::string_view method) {
+inline auto methodFromStr(std::string_view method) -> Method {
   static const std::map<std::string, Method, std::less<>> M_MAP = {
-      {"GET", Method::GET},         {"PUT", Method::PUT},
-      {"POST", Method::POST},       {"DELETE", Method::DELETE},
-      {"CONNECT", Method::CONNECT}, {"OPTIONS", Method::OPTIONS},
-      {"HEAD", Method::HEAD},       {"TRACE", Method::TRACE},
-      {"PATCH", Method::PATCH},
+      {"GET", Method::GET},       {"PUT", Method::PUT},         {"POST", Method::POST},
+      {"DELETE", Method::DELETE}, {"CONNECT", Method::CONNECT}, {"OPTIONS", Method::OPTIONS},
+      {"HEAD", Method::HEAD},     {"TRACE", Method::TRACE},     {"PATCH", Method::PATCH},
   };
   auto iter = M_MAP.find(method);
   if (iter == M_MAP.end()) return Method::INVALID;
@@ -70,7 +68,7 @@ inline Method methodFromStr(std::string_view method) {
   return iter->second;
 }
 
-inline Version versionFromStr(std::string_view version) {
+inline auto versionFromStr(std::string_view version) -> Version {
   static const std::map<std::string, Version, std::less<>> V_MAP = {
       {"HTTP/1.0", Version::HTTP1},
       {"HTTP/1.1", Version::HTTP11},

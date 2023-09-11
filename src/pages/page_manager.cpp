@@ -16,10 +16,10 @@
 #include <pages/page_content.hpp>
 #include <pages/page_manager.hpp>
 
-bool checkPath(std::string_view uri) { return uri.find("..") == std::string_view::npos; }
+auto checkPath(std::string_view uri) -> bool { return uri.find("..") == std::string_view::npos; }
 
 namespace simple {
-PageLoad Pages::loadPage(std::string_view uri) {
+auto Pages::loadPage(std::string_view uri) -> PageLoad {
   if (uri.empty() || (uri.size() == 1 && uri.at(0) == '/')) {
     return {LoadResult::SUCCESS, _cache.getPage(_basePath / "index.html")};
   }
@@ -40,7 +40,7 @@ PageLoad Pages::loadPage(std::string_view uri) {
   return {LoadResult::NOT_FOUND, _cache.getPage(_basePath / "NotFound.html")};
 }
 
-File Pages::useFile(const std::filesystem::path& path) {
+auto Pages::useFile(const std::filesystem::path& path) -> File {
   auto file = loadFile(path);
 
   if (file) {

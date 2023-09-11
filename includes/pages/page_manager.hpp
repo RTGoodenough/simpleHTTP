@@ -21,16 +21,16 @@
 namespace simple {
 class Pages {
  public:
-  [[nodiscard]] PageLoad loadPage(std::string_view);
+  [[nodiscard]] auto loadPage(std::string_view) -> PageLoad;
 
  private:
   PageCache             _cache;
   std::filesystem::path _basePath = std::filesystem::current_path() / "temp/routes";
 
-  [[nodiscard]] PageContent    useFile(std::string_view);
-  [[nodiscard]] static Content getContentType(const std::filesystem::path&);
+  [[nodiscard]] auto        useFile(std::string_view) -> PageContent;
+  [[nodiscard]] static auto getContentType(const std::filesystem::path&) -> Content;
 
-  [[nodiscard]] static File useFile(const std::filesystem::path&);
+  [[nodiscard]] static auto useFile(const std::filesystem::path&) -> File;
 };
 }  // namespace simple
 

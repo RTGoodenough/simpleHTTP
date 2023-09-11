@@ -11,7 +11,7 @@
 
 #include <server/shttp_Server.hpp>
 
-int main() {
-  simple::Server server;
+auto main() -> int {
+  simple::Server server(9000);
   server.start();
 }

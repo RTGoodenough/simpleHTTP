@@ -22,9 +22,7 @@
 namespace simple::respond {
 
 namespace {
-inline void sendData(const ByteVector& data, sock_fd socket) {
-  send(socket, data.data(), data.size(), 0);
-}
+inline void sendData(const ByteVector& data, sock_fd socket) { send(socket, data.data(), data.size(), 0); }
 }  // namespace
 
 void webPage(http::Status status, PageContentView content, sock_fd socket) {

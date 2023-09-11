@@ -20,7 +20,7 @@ namespace simple {
 
 using SubStrs = std::vector<std::string_view>;
 
-std::string_view splitFirst(std::string_view str, std::string_view delim);
+auto splitFirst(std::string_view str, std::string_view delim) -> std::string_view;
 
 }  // namespace simple
 

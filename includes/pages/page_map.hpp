@@ -25,7 +25,7 @@ class PageMap {
     _contentMap[filePath] = std::move(content);
   }
 
-  [[nodiscard]] PageContentView get(const std::filesystem::path& filePath) {
+  [[nodiscard]] auto get(const std::filesystem::path& filePath) -> PageContentView {
     auto iter = _contentMap.find(filePath);
     if (iter == _contentMap.end()) {
       return {Content::NOT_FOUND, nullptr, 0};

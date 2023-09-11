@@ -20,7 +20,7 @@
 #include <types/data.types.hpp>
 
 namespace simple {
-[[nodiscard]] std::optional<File> loadFile(const std::filesystem::path&);
+[[nodiscard]] auto loadFile(const std::filesystem::path&) -> std::optional<File>;
 }  // namespace simple
 
 #endif

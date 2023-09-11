@@ -146,7 +146,7 @@ struct Token {
   TokenType        type;
   std::string_view value;
 
-  [[nodiscard]] inline bool isType(TokenType tType) const { return type == tType; }
+  [[nodiscard]] inline auto isType(TokenType tType) const -> bool { return type == tType; }
 };
 
 #endif

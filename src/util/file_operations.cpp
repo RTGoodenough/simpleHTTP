@@ -15,7 +15,7 @@
 
 namespace simple {
 
-std::optional<File> loadFile(const std::filesystem::path& filepath) {
+auto loadFile(const std::filesystem::path& filepath) -> std::optional<File> {
   if (!std::filesystem::exists(filepath) || std::filesystem::is_directory(filepath)) {
     return std::nullopt;
   }

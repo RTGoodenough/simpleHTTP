@@ -36,9 +36,9 @@ class Socket {
  public:
   explicit Socket(port);
 
-  [[nodiscard]] size_t       pollWait();
-  [[nodiscard]] epoll_data_t getEvents(size_t) const;
-  [[nodiscard]] sock_fd      fd() const;
+  [[nodiscard]] auto pollWait() -> size_t;
+  [[nodiscard]] auto getEvents(size_t) const -> epoll_data_t;
+  [[nodiscard]] auto fd() const -> sock_fd;
 
   void shutdownSock();
   void newConnection();
@@ -59,9 +59,9 @@ class Socket {
 
  public:
   Socket(const Socket&) = default;
-  Socket& operator=(const Socket&) = default;
+  auto operator=(const Socket&) -> Socket& = default;
   Socket(Socket&&) = default;
-  Socket& operator=(Socket&&) = default;
+  auto operator=(Socket&&) -> Socket& = default;
   ~Socket();
 };
 

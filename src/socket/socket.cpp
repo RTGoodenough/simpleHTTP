@@ -45,32 +45,27 @@ simple::Socket::Socket(port prt)
   _pollEv.events = EPOLLIN;
   _pollEv.data.fd = _sock;
   if (epoll_ctl(_pollfd, EPOLL_CTL_ADD, _sock, &_pollEv) < 0) {
-    SocketException::error("Unable To Add Socket To epoll: ERRNO: " +
-                           std::to_string(errno));
+    SocketException::error("Unable To Add Socket To epoll: ERRNO: " + std::to_string(errno));
     shutdownSock();
   }
 
   if (listen(_sock, MAX_CONNECTIONS) < 0) {
-    SocketException::error("Unable To Start Listening On Socket: ERRNO: " +
-                           std::to_string(errno));
+    SocketException::error("Unable To Start Listening On Socket: ERRNO: " + std::to_string(errno));
     shutdownSock();
   }
 }
 
-size_t simple::Socket::pollWait() {
+auto simple::Socket::pollWait() -> size_t {
   int evCnt = epoll_wait(_pollfd, _events.data(), MAX_EV, -1);
   if (evCnt < 0) {
-    SocketException::error("Error waiting for event in epoll: ERRNO:" +
-                           std::to_string(errno));
+    SocketException::error("Error waiting for event in epoll: ERRNO:" + std::to_string(errno));
     shutdownSock();
   }
 
   return static_cast<size_t>(evCnt);
 }
 
-epoll_data_t simple::Socket::getEvents(size_t index) const {
-  return _events.at(index).data;
-}
+auto simple::Socket::getEvents(size_t index) const -> epoll_data_t { return _events.at(index).data; }
 
 void simple::Socket::newConnection() {
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) - Required for fitting C function
@@ -108,4 +103,4 @@ void simple::Socket::shutdownSock() {
   }
 }
 
-simple::sock_fd simple::Socket::fd() const { return _sock; }
+auto simple::Socket::fd() const -> simple::sock_fd { return _sock; }

@@ -14,8 +14,8 @@
 
 #include <filesystem>
 
-#include <pages/page_manager_config.hpp>
-#include <server/server_config.hpp>
+#include "pages/page_manager_config.hpp"
+#include "server/server_config.hpp"
 
 namespace simple {
 struct Config {
@@ -28,11 +28,11 @@ struct Config {
   ~Config() = default;
   Config(const Config&) = default;
   Config(Config&&) noexcept = default;
-  Config& operator=(const Config&) = default;
-  Config& operator=(Config&&) noexcept = default;
+  auto operator=(const Config&) -> Config& = default;
+  auto operator=(Config&&) noexcept -> Config& = default;
 
  private:
-  void loadFile(const std::filesystem::path& filepath) {
+  static void loadFile(const std::filesystem::path& filepath) {
     if (std::filesystem::is_regular_file(filepath)) {
       // TODO(rolland): load the file
     }

@@ -16,24 +16,24 @@
 #include <string_view>
 #include <unordered_map>
 
-#include <http/types/header.types.hpp>
-#include <http/types/http.types.hpp>
+#include "http/types/header.types.hpp"
+#include "http/types/http.types.hpp"
 
 namespace simple::http {
 class Request {
  public:
-  [[nodiscard]] inline std::string_view getHeader(Header hdrType) const {
+  [[nodiscard]] inline auto getHeader(Header hdrType) const -> std::string_view {
     auto iter = _headers.find(hdrType);
     if (iter == _headers.end()) return {};
 
     return iter->second;
   }
-  [[nodiscard]] inline http::UriTarget  getUri() const { return _uri; }
-  [[nodiscard]] inline http::Method     getMethod() const { return _method; }
-  [[nodiscard]] inline std::string_view getContent() const { return _content; }
-  [[nodiscard]] inline http::Version    getVerion() const { return _version; }
-  [[nodiscard]] inline std::string_view getQuery() const { return _query; }
-  [[nodiscard]] inline http::UriForm    getForm() const { return _uriForm; }
+  [[nodiscard]] inline auto getUri() const -> http::UriTarget { return _uri; }
+  [[nodiscard]] inline auto getMethod() const -> http::Method { return _method; }
+  [[nodiscard]] inline auto getContent() const -> std::string_view { return _content; }
+  [[nodiscard]] inline auto getVerion() const -> http::Version { return _version; }
+  [[nodiscard]] inline auto getQuery() const -> std::string_view { return _query; }
+  [[nodiscard]] inline auto getForm() const -> http::UriForm { return _uriForm; }
 
   inline void setUri(http::UriTarget uri) { _uri = uri; }
   inline void setTargetHost(std::string_view host) { _uri.host = host; }
@@ -60,8 +60,8 @@ class Request {
   ~Request() = default;
   Request(const Request& other) = default;
   Request(Request&& other) noexcept = default;
-  Request& operator=(const Request& other) = default;
-  Request& operator=(Request&& other) noexcept = default;
+  auto operator=(const Request& other) -> Request& = default;
+  auto operator=(Request&& other) noexcept -> Request& = default;
 };
 }  // namespace simple::http
 

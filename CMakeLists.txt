@@ -11,6 +11,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 set(INCLUDE_DIR includes)
 set(SRC_DIR src)
+set(DEPS_DIR deps)
 
 add_executable(
   ${PROJECT_NAME}
@@ -27,9 +28,8 @@ target_include_directories(
 
 include_directories(
   SYSTEM
-  ./deps
+  ${DEPS_DIR}/Party_Llama
 )
-
 
 if (DEBUG_MODE)
   set(CMAKE_BUILD_TYPE Debug)

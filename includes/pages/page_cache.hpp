@@ -22,7 +22,7 @@
 namespace simple {
 class PageCache {
  public:
-  PageContentView getPage(const std::filesystem::path& filePath) {
+  auto getPage(const std::filesystem::path& filePath) -> PageContentView {
     auto page = _map.get(filePath);
     if (page.data) {
       return page;

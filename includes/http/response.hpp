@@ -12,26 +12,27 @@
 #ifndef SIMPLE_HTTP_RESPONSE_HPP
 #define SIMPLE_HTTP_RESPONSE_HPP
 
-#include <pages/page_content.hpp>
+#include "pages/page_content.hpp"
 
-#include <http/types/header.types.hpp>
-#include <http/types/status.types.hpp>
-#include <types/data.types.hpp>
+#include "http/types/header.types.hpp"
+#include "http/types/status.types.hpp"
+
+#include "types/data.types.hpp"
 
 namespace simple::http {
 class Response {
  public:
-  ByteVector build();
+  auto build() -> ByteVector;
 
-  Response&            setStatus(Status);
-  [[nodiscard]] Status getStatus() const;
+  auto               setStatus(Status) -> Response&;
+  [[nodiscard]] auto getStatus() const -> Status;
 
-  Response&                      setHeader(Header, std::string_view);
-  [[nodiscard]] std::string_view getHeader(Header) const;
+  auto               setHeader(Header, std::string_view) -> Response&;
+  [[nodiscard]] auto getHeader(Header) const -> std::string_view;
 
-  Response& setContent(PageContentView);
+  auto setContent(PageContentView) -> Response&;
 
-  Response& setContentType(Content);
+  auto setContentType(Content) -> Response&;
 
  private:
   Status                                       _status;
@@ -39,7 +40,7 @@ class Response {
   PageContentView                              _page;
   std::string                                  _content_length;
 
-  size_t totalLength() const;
+  auto totalLength() const -> size_t;
 
   inline void        buildAddResponseLine(ByteVector&) const;
   static inline void buildAddHeader(Header, std::string_view, ByteVector&);

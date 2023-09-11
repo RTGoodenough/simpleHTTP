@@ -24,7 +24,7 @@
 
 namespace simple::http {
 
-std::optional<Request> Parser::parse(std::string_view reqStr) {
+auto Parser::parse(std::string_view reqStr) -> std::optional<Request> {
   _req = http::Request();
   _lexer = Lexer(reqStr);
   nextToken();
@@ -51,7 +51,7 @@ std::optional<Request> Parser::parse(std::string_view reqStr) {
   return _req;
 }
 
-bool Parser::match(TokenType type) {
+auto Parser::match(TokenType type) -> bool {
   if (!_lookahead.isType(type)) {
     return false;
   }
@@ -64,19 +64,19 @@ void Parser::nextToken() {
   _lookahead = _lexer.nextToken();
 }
 
-bool Parser::method() {
+auto Parser::method() -> bool {
   if (!match(TokenType::METHOD)) return false;
   _req.setMethod(methodFromStr(_token.value));
   return true;
 }
 
-bool Parser::version() {
+auto Parser::version() -> bool {
   if (!match(TokenType::VERSION)) return false;
   _req.setVersion(_token.value);
   return _req.getVerion() != http::Version::INVALID;
 }
 
-bool Parser::uri() {
+auto Parser::uri() -> bool {
   if (_lookahead.isType(TokenType::SCHEME)) {
     auto aform = absoluteForm();
     if (aform) {
@@ -116,7 +116,7 @@ bool Parser::uri() {
   return false;
 }
 
-bool Parser::headers() {
+auto Parser::headers() -> bool {
   while (_lookahead.type != TokenType::LINE_END) {
     if (!match(TokenType::HEADER)) return false;
     std::string_view temp = _token.value;
@@ -124,8 +124,7 @@ bool Parser::headers() {
     std::string_view hdrVal = _lexer.nextLine().value;
     _req.setHeader(
         headerFromStr(temp),
-        std::string_view(_lookahead.value.begin(),
-                         std::distance(_lookahead.value.begin(), hdrVal.end())));
+        std::string_view(_lookahead.value.begin(), std::distance(_lookahead.value.begin(), hdrVal.end())));
     nextToken();
     if (!match(TokenType::LINE_END)) return false;
   }
@@ -133,7 +132,7 @@ bool Parser::headers() {
   return true;
 }
 
-bool Parser::query() {
+auto Parser::query() -> bool {
   // TODO (rolland) : fully parse query, currently just accepts everything into a string_view
   if (_lookahead.type != TokenType::QUESTION) return true;
   nextToken();
@@ -151,7 +150,7 @@ bool Parser::query() {
   return true;
 }
 
-std::optional<http::UriTarget> Parser::originForm() {
+auto Parser::originForm() -> std::optional<http::UriTarget> {
   const char* begin = _token.value.end() + 1;
   const char* end = nullptr;
   while (_lookahead.isType(TokenType::ID) || _lookahead.isType(TokenType::FSLASH)) {
@@ -164,19 +163,19 @@ std::optional<http::UriTarget> Parser::originForm() {
                          std::string_view(begin, std::distance(begin, end - 1)), "80"};
 }
 
-std::optional<http::UriTarget> Parser::absoluteForm() {
+auto Parser::absoluteForm() -> std::optional<http::UriTarget> {
   //TODO(rolland) this
   throw std::runtime_error("absolute form not implemented");
   return std::nullopt;
 }
 
-std::optional<http::UriTarget> Parser::authorityForm() {
+auto Parser::authorityForm() -> std::optional<http::UriTarget> {
   //TODO(rolland) this
   throw std::runtime_error("authority not implemented");
   return std::nullopt;
 }
 
-std::optional<http::UriTarget> Parser::asteriskForm() {
+auto Parser::asteriskForm() -> std::optional<http::UriTarget> {
   if (!match(TokenType::ASTERISK)) return std::nullopt;
   return http::UriTarget{Scheme::HTTP, {}, "*", {}};
 }

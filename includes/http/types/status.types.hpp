@@ -68,7 +68,7 @@ enum class Status {
   NETWORK_AUTHENTICATION_REQUIRED = 511
 };
 
-inline const std::string& toStatusStr(Status status) {
+inline auto toStatusStr(Status status) -> const std::string& {
   static const std::map<Status, const std::string> STATUS_STRS{
       {Status::CONTINUE, "Continue"},
       {Status::SWITCHING_PROTOCOLS, "Switching Protocols"},
@@ -123,7 +123,7 @@ inline const std::string& toStatusStr(Status status) {
   return STATUS_STRS.at(status);
 }
 
-inline const std::string& toStatusNumStr(Status status) {
+inline auto toStatusNumStr(Status status) -> const std::string& {
   static const std::map<Status, const std::string> STATUS_NUMBER_STRS{
       {Status::CONTINUE, "100"},
       {Status::SWITCHING_PROTOCOLS, "101"},
