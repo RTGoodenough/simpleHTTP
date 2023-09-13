@@ -36,26 +36,26 @@ class Socket {
  public:
   explicit Socket(port);
 
-  [[nodiscard]] auto pollWait() -> size_t;
-  [[nodiscard]] auto getEvents(size_t) const -> epoll_data_t;
+  [[nodiscard]] auto poll_wait() -> size_t;
+  [[nodiscard]] auto get_events(size_t) const -> epoll_data_t;
   [[nodiscard]] auto fd() const -> sock_fd;
 
-  void shutdownSock();
-  void newConnection();
-  void closeConnection(sock_fd);
+  void shutdown_sock();
+  void new_connection();
+  void close_connection(sock_fd);
 
  private:
-  sock_fd _sock;
-  sock_fd _pollfd;
+  sock_fd _sock{};
+  sock_fd _pollfd{};
 
-  sockaddr_in _addr;
+  sockaddr_in _addr{};
   socklen_t   _addrlen = sizeof(_addr);
 
   static const int MAX_EV = 1000;
   static const int MAX_CONNECTIONS = 1000;
 
-  epoll_event                     _pollEv;
-  std::array<epoll_event, MAX_EV> _events;
+  epoll_event                     _pollEv{};
+  std::array<epoll_event, MAX_EV> _events{};
 
  public:
   Socket(const Socket&) = default;

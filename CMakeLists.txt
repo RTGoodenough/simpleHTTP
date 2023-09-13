@@ -9,9 +9,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
-set(INCLUDE_DIR includes)
 set(SRC_DIR src)
 set(DEPS_DIR deps)
+set(INCLUDE_DIR includes)
 
 add_executable(
   ${PROJECT_NAME}
@@ -26,9 +26,14 @@ target_include_directories(
   ${INCLUDE_DIR}
 )
 
-include_directories(
-  SYSTEM
-  ${DEPS_DIR}/Party_Llama
+add_subdirectory(${DEPS_DIR}/party_llama)
+add_subdirectory(${DEPS_DIR}/pirate)
+
+target_link_libraries(
+  ${PROJECT_NAME}
+  PUBLIC
+  pirate
+  party_llama
 )
 
 if (DEBUG_MODE)

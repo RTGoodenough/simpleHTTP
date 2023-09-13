@@ -9,7 +9,8 @@ Checks: >
   -android-*,
   -readability-braces-around-statements,
   -hicpp-braces-around-statements,
-  -google-readability-braces-around-statements
+  -google-readability-braces-around-statements,
+  -bugprone-easily-swappable-parameters
 
 WarningsAsErrors: "*"
 
@@ -17,8 +18,8 @@ CheckOptions:
   - { key: readability-identifier-naming.NamespaceCase                                                , value: lower_case       }
   - { key: readability-identifier-naming.ClassCase                                                    , value: Camel_Snake_Case }
   - { key: readability-identifier-naming.StructCase                                                   , value: CamelCase        }
-  - { key: readability-identifier-naming.TemplateParameterCase                                        , value: snake_case       }
-  - { key: readability-identifier-naming.FunctionCase                                                 , value: snake_case       }
+  - { key: readability-identifier-naming.TemplateParameterCase                                        , value: lower_case       }
+  - { key: readability-identifier-naming.FunctionCase                                                 , value: lower_case       }
   - { key: readability-identifier-naming.VariableCase                                                 , value: camelBack        }
   - { key: readability-identifier-naming.ClassMemberCase                                              , value: camelBack        }
   - { key: readability-identifier-naming.EnumConstantCase                                             , value: UPPER_CASE       }

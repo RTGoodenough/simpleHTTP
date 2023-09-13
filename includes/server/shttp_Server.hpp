@@ -18,11 +18,12 @@
 #include <string>
 #include <utility>
 
-#include "party_llama/event_system_async.hpp"
+#include <party_llama/party_llama.hpp>
 
 #include "events.hpp"
 #include "http/parsing.hpp"
 #include "pages/page_manager.hpp"
+#include "pirate.hpp"
 #include "server/server.types.hpp"
 #include "socket/socket.hpp"
 #include "types/data.types.hpp"
@@ -39,7 +40,15 @@ class ServerException : public std::runtime_error {
 
 class Server {
  public:
-  Server(int srvSock) : _srvSock(srvSock) {}
+  explicit Server(pirate::Args& args) : _srvSock(std::stoi(args.get("port"))) {
+    _pages.set_path(args.get("routes"));
+    if (args.has("threads"))
+      _eventHandler.set_threads(std::stoi(args.get("threads")));
+    else
+      _eventHandler.set_threads(1);
+  }
+
+  static void setup_args();
 
   auto start() -> Server&;
 
@@ -51,16 +60,15 @@ class Server {
 
   static constexpr size_t READ_SZ = 2048;
 
-  void handleEvents(size_t);
-  void handleData(sock_fd);
-  void handleRequest(sock_fd, const char*, size_t);
+  void handle_events(size_t);
+  void handle_data(sock_fd);
+  void handle_request(sock_fd, const char*, size_t);
 
-  [[nodiscard]] static auto readMessage(sock_fd) -> std::pair<char*, size_t>;
+  [[nodiscard]] static auto read_message(sock_fd) -> std::pair<char*, size_t>;
 
  public:
-  Server() : _srvSock(DEFAULT_PORT) {}
+  Server() = delete;
   ~Server() = default;
-
   Server(Server&&) noexcept = delete;
   auto operator=(Server&&) noexcept -> Server& = delete;
   Server(const Server&) = delete;

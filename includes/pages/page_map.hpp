@@ -21,6 +21,8 @@
 namespace simple {
 class PageMap {
  public:
+  void clear() { _contentMap.clear(); }
+
   void set(const std::filesystem::path& filePath, PageContent&& content) {
     _contentMap[filePath] = std::move(content);
   }

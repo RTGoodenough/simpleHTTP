@@ -22,7 +22,9 @@
 namespace simple {
 class PageCache {
  public:
-  auto getPage(const std::filesystem::path& filePath) -> PageContentView {
+  void clear() { _map.clear(); }
+
+  auto get_page(const std::filesystem::path& filePath) -> PageContentView {
     auto page = _map.get(filePath);
     if (page.data) {
       return page;
@@ -33,7 +35,7 @@ class PageCache {
       return {type, nullptr, 0};
     }
 
-    auto file = loadFile(filePath);
+    auto file = load_file(filePath);
 
     if (file) {
       _map.set(filePath, PageContent{type, std::move(file.value())});

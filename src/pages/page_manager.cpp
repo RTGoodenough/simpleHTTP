@@ -16,20 +16,22 @@
 #include <pages/page_content.hpp>
 #include <pages/page_manager.hpp>
 
-auto checkPath(std::string_view uri) -> bool { return uri.find("..") == std::string_view::npos; }
+auto check_path(std::string_view uri) -> bool { return uri.find("..") == std::string_view::npos; }
 
 namespace simple {
-auto Pages::loadPage(std::string_view uri) -> PageLoad {
+auto Pages::load_page(std::string_view uri) -> PageLoad {
+  debug("Load Page");
   if (uri.empty() || (uri.size() == 1 && uri.at(0) == '/')) {
-    return {LoadResult::SUCCESS, _cache.getPage(_basePath / "index.html")};
+    return {LoadResult::SUCCESS, _cache.get_page(_basePath / "index.html")};
   }
 
-  if (!checkPath(uri)) {
-    return {LoadResult::INVALID, _cache.getPage(_basePath / "NotFound.html")};
+  if (!check_path(uri)) {
+    debug("Invalid Path" + std::string(uri));
+    return {LoadResult::INVALID, _cache.get_page(_basePath / "NotFound.html")};
   }
 
   auto path = _basePath / uri.substr(1);
-  auto page = _cache.getPage(path);
+  auto page = _cache.get_page(path);
 
   if (page.data) {
     debug("Page Loaded");
@@ -37,11 +39,13 @@ auto Pages::loadPage(std::string_view uri) -> PageLoad {
   }
 
   debug("Page Not Found");
-  return {LoadResult::NOT_FOUND, _cache.getPage(_basePath / "NotFound.html")};
+  return {LoadResult::NOT_FOUND, _cache.get_page(_basePath / "NotFound.html")};
 }
 
-auto Pages::useFile(const std::filesystem::path& path) -> File {
-  auto file = loadFile(path);
+void Pages::set_path(std::string_view path) { _basePath = path; }
+
+auto Pages::use_file(const std::filesystem::path& path) -> File {
+  auto file = load_file(path);
 
   if (file) {
     return file.value();

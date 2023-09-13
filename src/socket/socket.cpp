@@ -12,10 +12,9 @@
 #include <fcntl.h>
 #include <socket/socket.hpp>
 
-simple::Socket::~Socket() { shutdownSock(); }
+simple::Socket::~Socket() { shutdown_sock(); }
 
-simple::Socket::Socket(port prt)
-    : _sock(socket(AF_INET, SOCK_STREAM, 0)), _pollfd(), _addr(), _pollEv(), _events() {
+simple::Socket::Socket(port prt) : _sock(socket(AF_INET, SOCK_STREAM, 0)), _addr(), _pollEv(), _events() {
   if (_sock < 0) {
     SocketException::error("Unable To Create Socket");
   }
@@ -23,7 +22,7 @@ simple::Socket::Socket(port prt)
   int opt = 1;
   if (setsockopt(_sock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)) < 0) {
     SocketException::error("Unable To Set Socket Options");
-    shutdownSock();
+    shutdown_sock();
   }
 
   _addr.sin_family = AF_INET;
@@ -33,41 +32,41 @@ simple::Socket::Socket(port prt)
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) - Required for fitting C function
   if (bind(_sock, reinterpret_cast<struct sockaddr*>(&_addr), sizeof(_addr)) < 0) {
     SocketException::error("Unable To Bind Socket: ERRNO: " + std::to_string(errno));
-    shutdownSock();
+    shutdown_sock();
   }
 
   int create = (_pollfd = epoll_create1(0));
   if (create < 0) {
     SocketException::error("Unable To Create epoll: ERRNO: " + std::to_string(errno));
-    shutdownSock();
+    shutdown_sock();
   }
 
   _pollEv.events = EPOLLIN;
   _pollEv.data.fd = _sock;
   if (epoll_ctl(_pollfd, EPOLL_CTL_ADD, _sock, &_pollEv) < 0) {
     SocketException::error("Unable To Add Socket To epoll: ERRNO: " + std::to_string(errno));
-    shutdownSock();
+    shutdown_sock();
   }
 
   if (listen(_sock, MAX_CONNECTIONS) < 0) {
     SocketException::error("Unable To Start Listening On Socket: ERRNO: " + std::to_string(errno));
-    shutdownSock();
+    shutdown_sock();
   }
 }
 
-auto simple::Socket::pollWait() -> size_t {
+auto simple::Socket::poll_wait() -> size_t {
   int evCnt = epoll_wait(_pollfd, _events.data(), MAX_EV, -1);
   if (evCnt < 0) {
     SocketException::error("Error waiting for event in epoll: ERRNO:" + std::to_string(errno));
-    shutdownSock();
+    shutdown_sock();
   }
 
   return static_cast<size_t>(evCnt);
 }
 
-auto simple::Socket::getEvents(size_t index) const -> epoll_data_t { return _events.at(index).data; }
+auto simple::Socket::get_events(size_t index) const -> epoll_data_t { return _events.at(index).data; }
 
-void simple::Socket::newConnection() {
+void simple::Socket::new_connection() {
   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast) - Required for fitting C function
   sock_fd newSock = accept(_sock, reinterpret_cast<struct sockaddr*>(&_addr), &_addrlen);
   if (newSock == -1) {
@@ -84,7 +83,7 @@ void simple::Socket::newConnection() {
   }
 }
 
-void simple::Socket::closeConnection(sock_fd sck) {
+void simple::Socket::close_connection(sock_fd sck) {
   if (_pollfd != 0) {
     if (epoll_ctl(_pollfd, EPOLL_CTL_DEL, sck, &_pollEv) == -1) {
     }
@@ -93,7 +92,7 @@ void simple::Socket::closeConnection(sock_fd sck) {
 }
 
 // NOLINTNEXTLINE(readability-make-member-function-const) - Technically could be const, but it affects the socket
-void simple::Socket::shutdownSock() {
+void simple::Socket::shutdown_sock() {
   if (_sock != 0) {
     shutdown(_sock, SHUT_RDWR);
     close(_sock);

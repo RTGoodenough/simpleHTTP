@@ -33,6 +33,8 @@ class EventSystem_Async {
     for (size_t i = 0; i < thread_cnt; ++i) {
       _threads.at(i) = std::thread(&EventSystem_Async::work, this);
     }
+
+    _workQueue.unblock_new();
   }
 
   /**

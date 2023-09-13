@@ -9,9 +9,13 @@
  * See file LICENSE for the full License
  */
 
+#include <pirate.hpp>
+
 #include <server/shttp_Server.hpp>
 
-auto main() -> int {
-  simple::Server server(9000);
+auto main(int argc, const char** argv) -> int {
+  simple::Server::setup_args();
+  pirate::Args   args{argc, argv};
+  simple::Server server(args);
   server.start();
 }
