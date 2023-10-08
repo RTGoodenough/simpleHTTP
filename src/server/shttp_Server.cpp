@@ -10,18 +10,17 @@
  */
 
 #include "server/shttp_Server.hpp"
-#include <new>
 #include "http/respond.hpp"
 #include "logging/logging.hpp"
 #include "pages/page_content.hpp"
 #include "pirate.hpp"
 #include "server/events.hpp"
+#include "types/arg_types.hpp"
 
 auto simple::Server::start() -> simple::Server& {
-  _eventHandler.on<event::Message>([&](event::Message message) {
+  _eventHandler.on<event::Message>([&](const event::Message& message) {
     debug("Event Handler");
     handle_request(message.sock_fd, message.message, message.readCnt);
-    delete[] message.message;
   });
 
   while (true) {
@@ -40,19 +39,17 @@ void simple::Server::handle_events(size_t eventCount) {
       _srvSock.new_connection();
     } else {
       auto [message, length] = read_message(event.fd);
-      if (message)
-        _eventHandler.emit<event::Message>({event.fd, message, length});
+      if (!message.empty())
+        _eventHandler.emit<event::Message>({event.fd, std::move(message), length});
       else
         _srvSock.close_connection(event.fd);
     }
   }
 }
 
-void simple::Server::handle_request(sock_fd sock, const char* req, size_t size) {
+void simple::Server::handle_request(sock_fd sock, const std::vector<char>& req, size_t size) {
   debug("New Request");
-  auto request = simple::http::Parser().parse(std::string_view(req, size));
-
-  // parse request, get length, read length of bytes
+  auto request = simple::http::Parser().parse(std::string_view(req.data(), size));
 
   if (!request) {
     debug("Bad Request");
@@ -65,19 +62,18 @@ void simple::Server::handle_request(sock_fd sock, const char* req, size_t size) 
                    page.content, sock);
 }
 
-auto simple::Server::read_message(sock_fd sock) -> std::pair<char*, size_t> {
-  auto*  data = new char[READ_SZ];
-  size_t readCnt = read(sock, data, READ_SZ);
+auto simple::Server::read_message(sock_fd sock) -> std::pair<std::vector<char>, size_t> {
+  auto   data = std::vector<char>(READ_SZ);
+  size_t readCnt = read(sock, data.data(), READ_SZ);
   if (readCnt == 0) {
-    delete[] data;
-    return {nullptr, 0};
+    return {{}, 0};
   }
 
-  return {data, readCnt};
+  return {std::move(data), readCnt};
 }
 
 void simple::Server::setup_args() {
-  pirate::Args::register_arg("port", true, true);
-  pirate::Args::register_arg("routes", true, true);
-  pirate::Args::register_arg("threads", false, true);
+  pirate::Args::register_arg("port", pirate::ArgType::REQUIRED | pirate::ArgType::VALUE_REQUIRED);
+  pirate::Args::register_arg("routes", pirate::ArgType::REQUIRED | pirate::ArgType::VALUE_REQUIRED);
+  pirate::Args::register_arg("threads", pirate::ArgType::OPTIONAL | pirate::ArgType::VALUE_REQUIRED);
 }

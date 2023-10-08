@@ -15,7 +15,8 @@
 
 auto main(int argc, const char** argv) -> int {
   simple::Server::setup_args();
-  pirate::Args   args{argc, argv};
-  simple::Server server(args);
+  pirate::Args::parse(argc, argv);
+  simple::Server server;
   server.start();
+  return 0;
 }

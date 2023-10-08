@@ -19,11 +19,12 @@
 #include <utility>
 
 #include <party_llama/party_llama.hpp>
+#include <pirate.hpp>
 
 #include "events.hpp"
 #include "http/parsing.hpp"
 #include "pages/page_manager.hpp"
-#include "pirate.hpp"
+#include "party_llama/event_system_immediate.hpp"
 #include "server/server.types.hpp"
 #include "socket/socket.hpp"
 #include "types/data.types.hpp"
@@ -40,14 +41,6 @@ class ServerException : public std::runtime_error {
 
 class Server {
  public:
-  explicit Server(pirate::Args& args) : _srvSock(std::stoi(args.get("port"))) {
-    _pages.set_path(args.get("routes"));
-    if (args.has("threads"))
-      _eventHandler.set_threads(std::stoi(args.get("threads")));
-    else
-      _eventHandler.set_threads(1);
-  }
-
   static void setup_args();
 
   auto start() -> Server&;
@@ -62,12 +55,19 @@ class Server {
 
   void handle_events(size_t);
   void handle_data(sock_fd);
-  void handle_request(sock_fd, const char*, size_t);
+  void handle_request(sock_fd, const std::vector<char>&, size_t);
 
-  [[nodiscard]] static auto read_message(sock_fd) -> std::pair<char*, size_t>;
+  [[nodiscard]] static auto read_message(sock_fd) -> std::pair<std::vector<char>, size_t>;
 
  public:
-  Server() = delete;
+  Server() : _srvSock(std::stoi(pirate::Args::get("port"))) {
+    _pages.set_path(pirate::Args::get("routes"));
+    if (pirate::Args::has("threads"))
+      _eventHandler.set_threads(std::stoi(pirate::Args::get("threads")));
+    else
+      _eventHandler.set_threads(1);
+  }
+
   ~Server() = default;
   Server(Server&&) noexcept = delete;
   auto operator=(Server&&) noexcept -> Server& = delete;
