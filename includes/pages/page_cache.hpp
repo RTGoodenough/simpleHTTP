@@ -30,7 +30,7 @@ class PageCache {
       return page;
     }
 
-    Content type = fileType(filePath);
+    Content type = file_type(filePath);
     if (type == Content::NOT_FOUND || type == Content::INVALID) {
       return {type, nullptr, 0};
     }

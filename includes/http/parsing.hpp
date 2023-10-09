@@ -32,7 +32,7 @@ class Parser {
   Request _req;
 
   [[nodiscard]] auto match(TokenType) -> bool;
-  void               nextToken();
+  void               next_token();
 
   [[nodiscard]] auto method() -> bool;
   [[nodiscard]] auto uri() -> bool;
@@ -40,10 +40,10 @@ class Parser {
   [[nodiscard]] auto version() -> bool;
   [[nodiscard]] auto query() -> bool;
 
-  [[nodiscard]] auto originForm() -> std::optional<http::UriTarget>;
-  [[nodiscard]] auto absoluteForm() -> std::optional<http::UriTarget>;
-  [[nodiscard]] auto authorityForm() -> std::optional<http::UriTarget>;
-  [[nodiscard]] auto asteriskForm() -> std::optional<http::UriTarget>;
+  [[nodiscard]] auto origin_form() -> std::optional<http::UriTarget>;
+  [[nodiscard]] auto absolute_form() -> std::optional<http::UriTarget>;
+  [[nodiscard]] auto authority_form() -> std::optional<http::UriTarget>;
+  [[nodiscard]] auto asterisk_form() -> std::optional<http::UriTarget>;
 };
 
 }  // namespace simple::http

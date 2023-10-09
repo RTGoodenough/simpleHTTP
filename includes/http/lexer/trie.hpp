@@ -1,3 +1,16 @@
+/**
+ * @file trie.hpp
+ * @author Rolland Goodenough (goodenoughr@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2023-10-09
+ * 
+ * @copyright Copyright 2023 Rolland Goodenough
+ * 
+ * This file is part of simpleHTTP which is released under the MIT License
+ * See file LICENSE for the full License
+ */
+
 #ifndef SIMPLE_HTTP_HTTPTRIE_HPP
 #define SIMPLE_HTTP_HTTPTRIE_HPP
 
@@ -24,7 +37,7 @@ struct TrieEntry {
 };
 
 // TODO(rolland): need to add headers for sec-ch-ua etc. or handle unknown headers
-static auto getReservedWords() -> const std::vector<TrieEntry>& {
+static auto get_reserved_words() -> const std::vector<TrieEntry>& {
   static const std::vector<TrieEntry> ENTRIES{
       {TokenType::METHOD, "CONNECT"},
       {TokenType::METHOD, "DELETE"},
@@ -208,7 +221,7 @@ struct TrieNode {
 class OpTrie {
  public:
   OpTrie() : _arena(1), _root(&_arena.back()) {
-    for (const auto& entry : getReservedWords()) {
+    for (const auto& entry : get_reserved_words()) {
       add(entry.str, entry.type);
     }
   }
@@ -246,7 +259,7 @@ class OpTrie {
 
       TrieNode* next = curr->next.at(idx);
       if (next == nullptr) {
-        return completeID(start, str, end);
+        return complete_id(start, str, end);
       }
 
       curr = next;
@@ -260,7 +273,7 @@ class OpTrie {
   std::vector<TrieNode> _arena;
   TrieNode*             _root;
 
-  static inline size_t index(char chr) {
+  static inline auto index(char chr) -> size_t {
     size_t idx = std::tolower(chr) - 'a';
     // NOLINTBEGIN (cppcoreguidelines-avoid-magic-numbers)
     if (idx >= ALPHABET_LENGTH) {
@@ -312,7 +325,7 @@ class OpTrie {
     return idx;
   }
 
-  [[nodiscard]] static Token completeID(const char* start, const char*& str, const char* const end) {
+  [[nodiscard]] static auto complete_id(const char* start, const char*& str, const char* const end) -> Token {
     while (str < end && (std::isalpha(*str) || *str == '.' || *str == '-' || *str == '_')) {
       ++str;
     }

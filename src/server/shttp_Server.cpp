@@ -53,13 +53,13 @@ void simple::Server::handle_request(sock_fd sock, const std::vector<char>& req, 
 
   if (!request) {
     debug("Bad Request");
-    respond::badRequest(sock);
+    respond::bad_request(sock);
     return;
   }
 
-  auto page = _pages.load_page(request->getUri().uri);
-  respond::webPage((page.found == LoadResult::SUCCESS ? http::Status::OK : http::Status::NOT_FOUND),
-                   page.content, sock);
+  auto page = _pages.load_page(request->get_uri().uri);
+  respond::web_page((page.found == LoadResult::SUCCESS ? http::Status::OK : http::Status::NOT_FOUND),
+                    page.content, sock);
 }
 
 auto simple::Server::read_message(sock_fd sock) -> std::pair<std::vector<char>, size_t> {

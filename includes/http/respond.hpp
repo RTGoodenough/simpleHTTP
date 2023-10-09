@@ -20,9 +20,9 @@
 #include <types/data.types.hpp>
 
 namespace simple::respond {
-void webPage(http::Status, PageContentView, sock_fd);
-void notFound(sock_fd);
-void badRequest(sock_fd);
+void web_page(http::Status, PageContentView, sock_fd);
+void not_found(sock_fd);
+void bad_request(sock_fd);
 }  // namespace simple::respond
 
 #endif

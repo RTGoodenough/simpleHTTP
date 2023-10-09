@@ -1,3 +1,16 @@
+/**
+ * @file token.cpp
+ * @author Rolland Goodenough (goodenoughr@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2023-10-09
+ * 
+ * @copyright Copyright 2023 Rolland Goodenough
+ * 
+ * This file is part of simpleHTTP which is released under the MIT License
+ * See file LICENSE for the full License
+ */
+
 #ifndef SIMPLE_HTTP_TOKEN_HPP
 #define SIMPLE_HTTP_TOKEN_HPP
 
@@ -146,7 +159,7 @@ struct Token {
   TokenType        type;
   std::string_view value;
 
-  [[nodiscard]] inline auto isType(TokenType tType) const -> bool { return type == tType; }
+  [[nodiscard]] inline auto is_type(TokenType tType) const -> bool { return type == tType; }
 };
 
 #endif

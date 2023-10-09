@@ -1,3 +1,15 @@
+/**
+ * @file lexer.cpp
+ * @author Rolland Goodenough (goodenoughr@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2023-10-09
+ * 
+ * @copyright Copyright 2023 Rolland Goodenough
+ * 
+ * This file is part of simpleHTTP which is released under the MIT License
+ * See file LICENSE for the full License
+ */
 
 #include <cctype>
 #include <iterator>
@@ -12,17 +24,17 @@
 
 namespace simple {
 
-inline auto getTrie() -> const OpTrie& {
+inline auto get_trie() -> const OpTrie& {
   static const OpTrie TRIE{};
   return TRIE;
 }
 
-auto Lexer::nextToken() -> Token {
+auto Lexer::next_token() -> Token {
   while (_iter != _data.end()) {
-    skipWhiteSpace();
+    skip_white_space();
     switch (*_iter) {
       case '\r':
-        return newLine();
+        return new_line();
         break;
       case ',':
         ++_iter;
@@ -119,11 +131,11 @@ auto Lexer::nextToken() -> Token {
     }
 
     if (isalpha(*_iter)) {
-      return parseString();
+      return parse_string();
     }
 
     if (isdigit(*_iter)) {
-      return parseNumber();
+      return parse_number();
     }
 
     Token ret = {TokenType::CHAR, {_iter, 1}};
@@ -134,8 +146,8 @@ auto Lexer::nextToken() -> Token {
   return Token{TokenType::END, {}};
 }
 
-auto Lexer::nextLine() -> Token {
-  skipWhiteSpace();
+auto Lexer::next_line() -> Token {
+  skip_white_space();
   const char* start = _iter;
   while (_iter != _data.end()) {
     if (*_iter == '\r') {
@@ -151,12 +163,12 @@ auto Lexer::nextLine() -> Token {
   return {TokenType::ID, std::string_view(start, std::distance(start, _iter))};
 }
 
-auto Lexer::parseString() -> Token {
-  auto val = getTrie().traverse(_iter, _data.end());
+auto Lexer::parse_string() -> Token {
+  auto val = get_trie().traverse(_iter, _data.end());
   return val;
 }
 
-auto Lexer::parseNumber() -> Token {
+auto Lexer::parse_number() -> Token {
   const auto* start = _iter;
   while (std::isdigit(*_iter) || *_iter == '.') {
     ++_iter;
@@ -164,7 +176,7 @@ auto Lexer::parseNumber() -> Token {
   return {TokenType::NUMBER, std::string_view(start, std::distance(start, _iter))};
 }
 
-auto Lexer::newLine() -> Token {
+auto Lexer::new_line() -> Token {
   ++_iter;
 
   if (_iter == _data.end()) {
@@ -179,7 +191,7 @@ auto Lexer::newLine() -> Token {
   return {TokenType::RETURN, {}};
 }
 
-void Lexer::skipWhiteSpace() {
+void Lexer::skip_white_space() {
   while (*_iter == ' ') {
     ++_iter;
   }

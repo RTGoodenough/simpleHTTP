@@ -19,8 +19,8 @@
 #include <util/file_operations.hpp>
 
 namespace simple {
-auto toContentStr(Content) -> const std::string&;
-auto toContentType(const std::string&) -> Content;
+auto to_content_str(Content) -> const std::string&;
+auto to_content_type(const std::string&) -> Content;
 
 struct PageContent {
   Content type;
@@ -44,13 +44,13 @@ struct PageLoad {
   PageContentView content;
 };
 
-inline auto fileType(const std::filesystem::path& path) -> Content {
+inline auto file_type(const std::filesystem::path& path) -> Content {
   if (!path.has_extension()) {
     return Content::HTML;
   }
 
   auto ext = path.extension();
-  return toContentType(ext);
+  return to_content_type(ext);
 }
 }  // namespace simple
 

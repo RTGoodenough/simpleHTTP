@@ -24,15 +24,15 @@ class Response {
  public:
   auto build() -> ByteVector;
 
-  auto               setStatus(Status) -> Response&;
-  [[nodiscard]] auto getStatus() const -> Status;
+  auto               set_status(Status) -> Response&;
+  [[nodiscard]] auto get_status() const -> Status;
 
-  auto               setHeader(Header, std::string_view) -> Response&;
-  [[nodiscard]] auto getHeader(Header) const -> std::string_view;
+  auto               set_header(Header, std::string_view) -> Response&;
+  [[nodiscard]] auto get_header(Header) const -> std::string_view;
 
-  auto setContent(PageContentView) -> Response&;
+  auto set_content(PageContentView) -> Response&;
 
-  auto setContentType(Content) -> Response&;
+  auto set_content_type(Content) -> Response&;
 
  private:
   Status                                       _status;
@@ -40,11 +40,11 @@ class Response {
   PageContentView                              _page;
   std::string                                  _content_length;
 
-  auto totalLength() const -> size_t;
+  auto total_length() const -> size_t;
 
-  inline void        buildAddResponseLine(ByteVector&) const;
-  static inline void buildAddHeader(Header, std::string_view, ByteVector&);
-  static inline void buildAddContent(PageContentView, ByteVector&);
+  inline void        build_add_response_line(ByteVector&) const;
+  static inline void build_add_header(Header, std::string_view, ByteVector&);
+  static inline void build_add_content(PageContentView, ByteVector&);
 };
 }  // namespace simple::http
 

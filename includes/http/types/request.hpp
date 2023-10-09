@@ -22,29 +22,29 @@
 namespace simple::http {
 class Request {
  public:
-  [[nodiscard]] inline auto getHeader(Header hdrType) const -> std::string_view {
+  [[nodiscard]] inline auto get_header(Header hdrType) const -> std::string_view {
     auto iter = _headers.find(hdrType);
     if (iter == _headers.end()) return {};
 
     return iter->second;
   }
-  [[nodiscard]] inline auto getUri() const -> http::UriTarget { return _uri; }
-  [[nodiscard]] inline auto getMethod() const -> http::Method { return _method; }
-  [[nodiscard]] inline auto getContent() const -> std::string_view { return _content; }
-  [[nodiscard]] inline auto getVerion() const -> http::Version { return _version; }
-  [[nodiscard]] inline auto getQuery() const -> std::string_view { return _query; }
-  [[nodiscard]] inline auto getForm() const -> http::UriForm { return _uriForm; }
+  [[nodiscard]] inline auto get_uri() const -> http::UriTarget { return _uri; }
+  [[nodiscard]] inline auto get_method() const -> http::Method { return _method; }
+  [[nodiscard]] inline auto get_content() const -> std::string_view { return _content; }
+  [[nodiscard]] inline auto get_verion() const -> http::Version { return _version; }
+  [[nodiscard]] inline auto get_query() const -> std::string_view { return _query; }
+  [[nodiscard]] inline auto get_form() const -> http::UriForm { return _uriForm; }
 
-  inline void setUri(http::UriTarget uri) { _uri = uri; }
-  inline void setTargetHost(std::string_view host) { _uri.host = host; }
-  inline void setTargetScheme(http::Scheme scheme) { _uri.scheme = scheme; }
-  inline void setTargetPort(std::string_view port) { _uri.port = port; }
-  inline void setHeader(Header hdr, std::string_view val) { _headers[hdr] = val; }
-  inline void setContent(std::string_view content) { _content = content; }
-  inline void setMethod(http::Method method) { _method = method; }
-  inline void setVersion(std::string_view version) { _version = versionFromStr(version); }
-  inline void setQuery(std::string_view query) { _query = query; }
-  inline void setUriForm(UriForm form) { _uriForm = form; }
+  inline void set_uri(http::UriTarget uri) { _uri = uri; }
+  inline void set_target_host(std::string_view host) { _uri.host = host; }
+  inline void set_target_scheme(http::Scheme scheme) { _uri.scheme = scheme; }
+  inline void set_target_port(std::string_view port) { _uri.port = port; }
+  inline void set_header(Header hdr, std::string_view val) { _headers[hdr] = val; }
+  inline void set_content(std::string_view content) { _content = content; }
+  inline void set_method(http::Method method) { _method = method; }
+  inline void set_version(std::string_view version) { _version = version_from_str(version); }
+  inline void set_query(std::string_view query) { _query = query; }
+  inline void set_uri_form(UriForm form) { _uriForm = form; }
 
  private:
   http::Method                                 _method{Method::GET};

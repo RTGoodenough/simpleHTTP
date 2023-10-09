@@ -22,23 +22,23 @@
 namespace simple::respond {
 
 namespace {
-inline void sendData(const ByteVector& data, sock_fd socket) { send(socket, data.data(), data.size(), 0); }
+inline void send_data(const ByteVector& data, sock_fd socket) { send(socket, data.data(), data.size(), 0); }
 }  // namespace
 
-void webPage(http::Status status, PageContentView content, sock_fd socket) {
+void web_page(http::Status status, PageContentView content, sock_fd socket) {
   http::Response res;
-  res.setStatus(status).setContent(content);
-  sendData(res.build(), socket);
+  res.set_status(status).set_content(content);
+  send_data(res.build(), socket);
 }
 
-void badRequest(sock_fd socket) {
+void bad_request(sock_fd socket) {
   http::Response res;
 
-  res.setStatus(http::Status::BAD_REQUEST);
+  res.set_status(http::Status::BAD_REQUEST);
 
   auto data = res.build();
   debug({data.data(), data.size()});
-  sendData(data, socket);
+  send_data(data, socket);
 }
 
 }  // namespace simple::respond

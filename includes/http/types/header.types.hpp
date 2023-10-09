@@ -95,7 +95,7 @@ enum class Header {
   UKNOWN,
 };
 
-inline const std::string& toHeaderStr(Header hdr) {
+inline auto to_header_str(Header hdr) -> const std::string& {
   static const std::map<Header, std::string> HEADER_STRS{
       {Header::A_IM, "A-IM"},
       {Header::ACCEPT, "Accept"},
@@ -174,7 +174,7 @@ inline const std::string& toHeaderStr(Header hdr) {
   return HEADER_STRS.at(hdr);
 }
 
-inline Header headerFromStr(std::string_view hdr) {
+inline auto header_from_str(std::string_view hdr) -> Header {
   static const std::map<std::string, Header, std::less<>> HEADER_STRS{
       {"A-IM", Header::A_IM},
       {"Accept", Header::ACCEPT},

@@ -20,45 +20,45 @@
 namespace simple {
 
 namespace {
-inline auto getVersion() -> const std::string& {
+inline auto get_version() -> const std::string& {
   static const std::string HTTP_VERSION = "HTTP/1.1";
   return HTTP_VERSION;
 }
 
-inline auto getLineEnd() -> const std::string& {
+inline auto get_line_end() -> const std::string& {
   static const std::string LINE_END = "\r\n";
   return LINE_END;
 }
 }  // namespace
 
 auto http::Response::build() -> ByteVector {
-  size_t length = totalLength();
+  size_t length = total_length();
 
   ByteVector data;
   data.reserve(length);
 
-  buildAddResponseLine(data);
+  build_add_response_line(data);
   for (const auto [header, value] : _headers) {
-    buildAddHeader(header, value, data);
+    build_add_header(header, value, data);
   }
-  buildAddContent(_page, data);
+  build_add_content(_page, data);
 
   return data;
 }
 
-auto http::Response::setStatus(Status stat) -> http::Response& {
+auto http::Response::set_status(Status stat) -> http::Response& {
   _status = stat;
   return *this;
 }
 
-auto http::Response::getStatus() const -> http::Status { return _status; }
+auto http::Response::get_status() const -> http::Status { return _status; }
 
-auto http::Response::setHeader(Header header, std::string_view val) -> http::Response& {
+auto http::Response::set_header(Header header, std::string_view val) -> http::Response& {
   _headers[header] = val;
   return *this;
 }
 
-auto http::Response::getHeader(Header header) const -> std::string_view {
+auto http::Response::get_header(Header header) const -> std::string_view {
   if (_headers.find(header) == _headers.end()) {
     return {};
   }
@@ -66,36 +66,36 @@ auto http::Response::getHeader(Header header) const -> std::string_view {
   return _headers.at(header);
 }
 
-auto http::Response::setContent(PageContentView content) -> http::Response& {
+auto http::Response::set_content(PageContentView content) -> http::Response& {
   _page = content;
   _content_length = std::to_string(content.size);
-  setHeader(Header::CONTENT_TYPE, toContentStr(content.type))
-      .setHeader(Header::CONTENT_LENGTH, _content_length);
+  set_header(Header::CONTENT_TYPE, to_content_str(content.type))
+      .set_header(Header::CONTENT_LENGTH, _content_length);
   return *this;
 }
 
-auto http::Response::totalLength() const -> size_t {
+auto http::Response::total_length() const -> size_t {
   size_t length = 0;
 
-  length += getVersion().length() + toStatusStr(_status).length() + getLineEnd().length();
+  length += get_version().length() + to_status_str(_status).length() + get_line_end().length();
 
   for (auto [header, value] : _headers) {
-    length += toHeaderStr(header).length() + value.length() + getLineEnd().length();
+    length += to_header_str(header).length() + value.length() + get_line_end().length();
   }
 
-  length += getLineEnd().length();
+  length += get_line_end().length();
 
   length += _page.size;
 
   return length;
 }
 
-inline void http::Response::buildAddResponseLine(ByteVector& data) const {
-  const auto& statusStr = toStatusStr(_status);
-  const auto& statusNumberStr = toStatusNumStr(_status);
+inline void http::Response::build_add_response_line(ByteVector& data) const {
+  const auto& statusStr = to_status_str(_status);
+  const auto& statusNumberStr = to_status_num_str(_status);
 
-  auto iter = data.insert(data.end(), getVersion().begin(), getVersion().end()) +
-              static_cast<std::ptrdiff_t>(getVersion().length());
+  auto iter = data.insert(data.end(), get_version().begin(), get_version().end()) +
+              static_cast<std::ptrdiff_t>(get_version().length());
   iter = data.insert(iter, ' ') + 1;
   iter = data.insert(iter, statusNumberStr.begin(), statusNumberStr.end()) +
          static_cast<std::ptrdiff_t>(statusNumberStr.length());
@@ -103,25 +103,25 @@ inline void http::Response::buildAddResponseLine(ByteVector& data) const {
   iter =
       data.insert(iter, statusStr.begin(), statusStr.end()) + static_cast<std::ptrdiff_t>(statusStr.length());
   iter = data.insert(iter, ' ') + 1;
-  iter = data.insert(iter, getLineEnd().begin(), getLineEnd().end()) +
-         static_cast<std::ptrdiff_t>(getLineEnd().length());
+  iter = data.insert(iter, get_line_end().begin(), get_line_end().end()) +
+         static_cast<std::ptrdiff_t>(get_line_end().length());
 }
 
-inline void http::Response::buildAddHeader(Header type, const std::string_view value, ByteVector& data) {
-  const auto& headerStr = toHeaderStr(type);
+inline void http::Response::build_add_header(Header type, const std::string_view value, ByteVector& data) {
+  const auto& headerStr = to_header_str(type);
 
   auto iter = data.insert(data.end(), headerStr.begin(), headerStr.end()) +
               static_cast<std::ptrdiff_t>(headerStr.length());
   iter = data.insert(iter, ':') + 1;
   iter = data.insert(iter, ' ') + 1;
   iter = data.insert(iter, value.begin(), value.end()) + static_cast<std::ptrdiff_t>(value.length());
-  iter = data.insert(iter, getLineEnd().begin(), getLineEnd().end()) +
-         static_cast<std::ptrdiff_t>(getLineEnd().length());
+  iter = data.insert(iter, get_line_end().begin(), get_line_end().end()) +
+         static_cast<std::ptrdiff_t>(get_line_end().length());
 }
 
-inline void http::Response::buildAddContent(PageContentView content, ByteVector& data) {
-  auto iter = data.insert(data.end(), getLineEnd().begin(), getLineEnd().end()) +
-              static_cast<std::ptrdiff_t>(getLineEnd().length());
+inline void http::Response::build_add_content(PageContentView content, ByteVector& data) {
+  auto iter = data.insert(data.end(), get_line_end().begin(), get_line_end().end()) +
+              static_cast<std::ptrdiff_t>(get_line_end().length());
   iter = data.insert(iter, content.data, std::next(content.data, static_cast<std::ptrdiff_t>(content.size))) +
          static_cast<std::ptrdiff_t>(content.size);
 }
