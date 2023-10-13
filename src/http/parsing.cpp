@@ -14,13 +14,13 @@
 #include <stdexcept>
 #include <string_view>
 
-#include <http/lexer/token.hpp>
-#include <http/parsing.hpp>
-#include <http/types/header.types.hpp>
-#include <http/types/http.types.hpp>
-#include <http/types/request.hpp>
-#include <logging/logging.hpp>
-#include <util/string_view_manipulations.hpp>
+#include "http/lexer/token.hpp"
+#include "http/parsing.hpp"
+#include "http/types/header.types.hpp"
+#include "http/types/http.types.hpp"
+#include "http/types/request.hpp"
+#include "logging/logging.hpp"
+#include "util/string_view_manipulations.hpp"
 
 namespace simple::http {
 

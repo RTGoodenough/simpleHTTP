@@ -15,8 +15,8 @@
 #include <filesystem>
 #include <string_view>
 
-#include <pages/page_cache.hpp>
-#include <pages/page_content.hpp>
+#include "pages/page_cache.hpp"
+#include "pages/page_content.hpp"
 
 namespace simple {
 class Pages {
@@ -27,7 +27,7 @@ class Pages {
 
  private:
   PageCache             _cache;
-  std::filesystem::path _basePath = std::filesystem::current_path() / "temp/routes";
+  std::filesystem::path _basePath = std::filesystem::current_path();
 
   [[nodiscard]] auto        use_file(std::string_view) -> PageContent;
   [[nodiscard]] static auto get_content_type(const std::filesystem::path&) -> Content;

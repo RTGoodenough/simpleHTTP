@@ -14,8 +14,8 @@
 
 #include <filesystem>
 
-#include <pages/page_content.hpp>
-#include <pages/page_map.hpp>
+#include "pages/page_content.hpp"
+#include "pages/page_map.hpp"
 #include "types/data.types.hpp"
 #include "util/file_operations.hpp"
 
@@ -38,7 +38,8 @@ class PageCache {
     auto file = load_file(filePath);
 
     if (file) {
-      _map.set(filePath, PageContent{type, std::move(file.value())});
+      _map.set(filePath,
+               PageContent{type, std::move(file.value()), std::filesystem::last_write_time(filePath)});
     }
 
     return _map.get(filePath);

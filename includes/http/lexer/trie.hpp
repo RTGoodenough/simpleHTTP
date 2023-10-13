@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include <http/lexer/token.hpp>
+#include "http/lexer/token.hpp"
 
 namespace simple {
 
@@ -166,6 +166,7 @@ static auto get_reserved_words() -> const std::vector<TrieEntry>& {
       {TokenType::HEADER, "Sec-GPC"},
       {TokenType::HEADER, "Experimental"},
       {TokenType::HEADER, "Sec-Purpose"},
+      {TokenType::HEADER, "Purpose"},
       {TokenType::HEADER, "Sec-WebSocket-Accept"},
       {TokenType::HEADER, "Server"},
       {TokenType::HEADER, "Server-Timing"},

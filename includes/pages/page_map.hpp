@@ -15,7 +15,7 @@
 #include <filesystem>
 #include <map>
 
-#include <pages/page_content.hpp>
+#include "pages/page_content.hpp"
 #include "types/data.types.hpp"
 
 namespace simple {
@@ -30,6 +30,11 @@ class PageMap {
   [[nodiscard]] auto get(const std::filesystem::path& filePath) -> PageContentView {
     auto iter = _contentMap.find(filePath);
     if (iter == _contentMap.end()) {
+      return {Content::NOT_FOUND, nullptr, 0};
+    }
+
+    if (iter->second.lastUpdate != std::filesystem::last_write_time(filePath)) {
+      _contentMap.erase(iter);
       return {Content::NOT_FOUND, nullptr, 0};
     }
 

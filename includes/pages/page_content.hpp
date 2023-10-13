@@ -15,16 +15,17 @@
 #include <filesystem>
 #include <unordered_map>
 
-#include <types/data.types.hpp>
-#include <util/file_operations.hpp>
+#include "types/data.types.hpp"
+#include "util/file_operations.hpp"
 
 namespace simple {
 auto to_content_str(Content) -> const std::string&;
 auto to_content_type(const std::string&) -> Content;
 
 struct PageContent {
-  Content type;
-  File    file;
+  Content                         type;
+  File                            file;
+  std::filesystem::file_time_type lastUpdate;
 };
 
 struct PageContentView {
@@ -40,7 +41,7 @@ enum class LoadResult {
 };
 
 struct PageLoad {
-  LoadResult      found{};
+  LoadResult      found{LoadResult::NOT_FOUND};
   PageContentView content;
 };
 

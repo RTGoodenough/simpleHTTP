@@ -49,7 +49,7 @@ void simple::Server::handle_events(size_t eventCount) {
 
 void simple::Server::handle_request(sock_fd sock, const std::vector<char>& req, size_t size) {
   debug("New Request");
-  auto request = simple::http::Parser().parse(std::string_view(req.data(), size));
+  auto request = http::Parser().parse(std::string_view(req.data(), size));
 
   if (!request) {
     debug("Bad Request");
