@@ -28,6 +28,7 @@
 #include "server/server.types.hpp"
 #include "socket/socket.hpp"
 #include "types/data.types.hpp"
+#include "util/class_types.hpp"
 
 namespace simple {
 
@@ -40,6 +41,9 @@ class ServerException : public std::runtime_error {
 };
 
 class Server {
+  NON_MOVEABLE(Server)
+  NON_COPYABLE(Server)
+
  public:
   static void setup_args();
 
@@ -57,6 +61,8 @@ class Server {
   void handle_data(sock_fd);
   void handle_request(sock_fd, const std::vector<char>&, size_t);
 
+  static void handle_broken_pipe(int);
+
   [[nodiscard]] static auto read_message(sock_fd) -> std::pair<std::vector<char>, size_t>;
 
  public:
@@ -67,12 +73,7 @@ class Server {
     else
       _eventHandler.set_threads(1);
   }
-
   ~Server() = default;
-  Server(Server&&) noexcept = delete;
-  auto operator=(Server&&) noexcept -> Server& = delete;
-  Server(const Server&) = delete;
-  auto operator=(const Server&) -> Server& = delete;
 };
 }  // namespace simple
 

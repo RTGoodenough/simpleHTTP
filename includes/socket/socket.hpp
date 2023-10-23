@@ -19,11 +19,13 @@
 #include <unistd.h>
 
 #include <array>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 
 #include <server/server.types.hpp>
 #include <socket/socket.types.hpp>
+#include "util/class_types.hpp"
 
 namespace simple {
 class SocketException : public std::runtime_error {
@@ -33,6 +35,10 @@ class SocketException : public std::runtime_error {
 };
 
 class Socket {
+  NON_DEFAULT_CONSTRUCIBLE(Socket)
+  DEFAULT_MOVEABLE(Socket)
+  NON_COPYABLE(Socket)
+
  public:
   explicit Socket(port);
 
@@ -43,6 +49,8 @@ class Socket {
   void shutdown_sock();
   void new_connection();
   void close_connection(sock_fd);
+
+  auto lock() -> std::unique_lock<std::mutex>;
 
  private:
   sock_fd _sock{};
@@ -58,10 +66,6 @@ class Socket {
   std::array<epoll_event, MAX_EV> _events{};
 
  public:
-  Socket(const Socket&) = default;
-  auto operator=(const Socket&) -> Socket& = default;
-  Socket(Socket&&) = default;
-  auto operator=(Socket&&) -> Socket& = default;
   ~Socket();
 };
 

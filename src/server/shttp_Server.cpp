@@ -72,6 +72,8 @@ auto simple::Server::read_message(sock_fd sock) -> std::pair<std::vector<char>, 
   return {std::move(data), readCnt};
 }
 
+void handle_broken_pipe(int /*sig*/) {}
+
 void simple::Server::setup_args() {
   pirate::Args::register_arg("port", pirate::ArgType::REQUIRED | pirate::ArgType::VALUE_REQUIRED);
   pirate::Args::register_arg("routes", pirate::ArgType::REQUIRED | pirate::ArgType::VALUE_REQUIRED);

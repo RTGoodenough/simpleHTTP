@@ -18,7 +18,8 @@
 #include <string_view>
 
 #ifndef NDEBUG
-inline void debug(std::string_view message) { std::cout << "[Debug] " << message << '\n'; }
+// inline void debug(std::string_view message) { std::cout << "[Debug] " << message << '\n'; }
+inline void debug(std::string_view /*message*/) {}
 #else
 inline void debug(std::string_view /*message*/) {}
 #endif

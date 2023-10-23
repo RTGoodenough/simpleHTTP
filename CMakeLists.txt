@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.14)
 
 OPTION(DEBUG_MODE OFF)
 
+if (DEBUG_MODE)
+  message(STATUS "Debug mode is ON")
+else()
+  message(STATUS "Debug mode is OFF")
+endif()
+
 set(PROJECT_NAME simpleHTTP)
 project(${PROJECT_NAME})
 
@@ -42,6 +48,16 @@ if (DEBUG_MODE)
   set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -g -fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all -fsanitize=float-divide-by-zero -fsanitize=float-cast-overflow -fno-sanitize=null -fno-sanitize=alignment")
 else()
   set(CMAKE_BUILD_TYPE Release)
+
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT supported OUTPUT error)
+
+  if( supported )
+    message(STATUS "IPO / LTO enabled")
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+  else()
+    message(STATUS "IPO / LTO not supported: <${error}>")
+  endif()
 endif()
 
 target_compile_options(

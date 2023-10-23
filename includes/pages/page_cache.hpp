@@ -13,6 +13,7 @@
 #define SIMPLE_HTTP_PAGE_CACHE_HPP
 
 #include <filesystem>
+#include <mutex>
 
 #include "pages/page_content.hpp"
 #include "pages/page_map.hpp"
@@ -22,10 +23,14 @@
 namespace simple {
 class PageCache {
  public:
-  void clear() { _map.clear(); }
+  void clear() {
+    std::lock_guard<std::mutex> lock{_mux};
+    _map.clear();
+  }
 
   auto get_page(const std::filesystem::path& filePath) -> PageContentView {
-    auto page = _map.get(filePath);
+    std::lock_guard<std::mutex> lock{_mux};
+    auto                        page = _map.get(filePath);
     if (page.data) {
       return page;
     }
@@ -46,7 +51,8 @@ class PageCache {
   }
 
  private:
-  PageMap _map;
+  PageMap    _map;
+  std::mutex _mux;
 };
 }  // namespace simple
 

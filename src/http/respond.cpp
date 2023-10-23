@@ -22,7 +22,11 @@
 namespace simple::respond {
 
 namespace {
-inline void send_data(const ByteVector& data, sock_fd socket) { send(socket, data.data(), data.size(), 0); }
+inline void send_data(const ByteVector& data, sock_fd socket) {
+  if (send(socket, data.data(), data.size(), MSG_NOSIGNAL) == -1) {
+    warn("Failed to Send Data To:" + std::to_string(socket));
+  }
+}
 }  // namespace
 
 void web_page(http::Status status, PageContentView content, sock_fd socket) {
@@ -37,7 +41,6 @@ void bad_request(sock_fd socket) {
   res.set_status(http::Status::BAD_REQUEST);
 
   auto data = res.build();
-  debug({data.data(), data.size()});
   send_data(data, socket);
 }
 
